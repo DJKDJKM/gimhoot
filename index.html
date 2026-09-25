@@ -1,0 +1,2941 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root{ color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body{ margin:0; font: 14px system-ui, -apple-system, "Segoe UI", sans-serif; background:#f7f7f5; }
+  img{ max-width:100%; }
+  [hidden]{ display:none !important; }
+</style>
+<title>Gimhoot</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap">
+<style>
+  :root{
+    color-scheme: dark;
+    --ground:#1A0E24; --panel:#2B1739; --panel-2:#351D46; --edge:#4A2C63;
+    --cream:#FBF2E2; --muted:#B49BC8;
+    --marigold:#FFB627; --coral:#FF4D5E; --teal:#23D2B5; --grape:#9B6BFF;
+    --magenta:#D94FA8; --sky:#5BC0EB; --lime:#A8E05F; --sand:#E8D2B0; --orange:#FF9A52;
+    --good:#23D2B5; --bad:#FF4D5E;
+    --shadow:0 10px 0 rgba(0,0,0,.35); --r:14px;
+    --display:"Bricolage Grotesque","Arial Black",system-ui,sans-serif;
+    --body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:"Space Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  }
+  body{
+    background:radial-gradient(1200px 600px at 50% -10%, #3A1B4E 0%, rgba(58,27,78,0) 60%), var(--ground);
+    color:var(--cream); font-family:var(--body); font-size:16px; line-height:1.5; min-height:100%;
+  }
+  *{box-sizing:border-box}
+  h1,h2,h3,h4{font-family:var(--display);font-weight:800;line-height:1.05;margin:0;text-wrap:balance}
+  p{margin:0}
+  button{font:inherit;color:inherit;cursor:pointer;border:none;background:none}
+  input,select,textarea{font:inherit}
+  :focus-visible{outline:3px solid var(--marigold);outline-offset:3px;border-radius:6px}
+  .wrap{max-width:1060px;margin:0 auto;padding-inline:18px;padding-block:22px 48px}
+
+  /* marquee */
+  .marquee{text-align:center;margin-bottom:22px}
+  .bulbs{display:flex;justify-content:center;gap:10px;margin-bottom:12px}
+  .bulbs i{width:9px;height:9px;border-radius:50%;background:var(--marigold);box-shadow:0 0 12px rgba(255,182,39,.8);animation:blink 1.8s infinite}
+  .bulbs i:nth-child(2n){background:var(--coral);box-shadow:0 0 12px rgba(255,77,94,.8);animation-delay:.3s}
+  .bulbs i:nth-child(3n){background:var(--teal);box-shadow:0 0 12px rgba(35,210,181,.8);animation-delay:.6s}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  .logo{font-family:var(--display);font-weight:800;font-size:clamp(40px,10vw,80px);letter-spacing:-.03em;line-height:.9;
+    color:var(--cream);text-shadow:3px 3px 0 var(--coral), 6px 6px 0 var(--grape)}
+  .logo span{color:var(--marigold)}
+  .tagline{color:var(--muted);font-size:13px;margin-top:11px;letter-spacing:.14em;text-transform:uppercase}
+
+  /* tabs */
+  .tabs{display:flex;gap:8px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
+  .tab{border:2px solid var(--edge);background:var(--panel);color:var(--muted);border-radius:99px;
+    padding:9px 22px;font-weight:600;font-size:15px}
+  .tab.on{background:var(--cream);border-color:var(--cream);color:#241130}
+
+  /* generic pieces */
+  .card{background:var(--panel);border:2px solid var(--edge);border-radius:var(--r);padding:20px;
+    box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--marigold)}
+  .card h2{font-size:23px}
+  .meta{color:var(--muted);font-size:13px}
+  .deck{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  @media (max-width:820px){.deck{grid-template-columns:1fr}}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .row > .field{flex:1 1 150px}
+  .field label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .field input,.field select,.field textarea,.ta{
+    background:var(--ground);border:2px solid var(--edge);color:var(--cream);
+    border-radius:10px;padding:11px 12px;width:100%;
+  }
+  .field input::placeholder,.ta::placeholder{color:#7C6690}
+  .ta{font-family:var(--mono);font-size:12px;resize:vertical;word-break:break-all}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{border-radius:12px;padding:13px 18px;font-weight:600;border:2px solid transparent;text-align:center;transition:transform .08s ease}
+  .btn:active{transform:translateY(2px)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn-go{background:var(--marigold);color:#2A1200;box-shadow:0 5px 0 #B87C00}
+  .btn-go:active{box-shadow:0 3px 0 #B87C00}
+  .btn-ghost{border-color:var(--edge);color:var(--cream);background:var(--panel-2)}
+  .btn-sm{padding:8px 12px;font-size:13px;border-radius:10px}
+  .btn-tiny{padding:5px 9px;font-size:12px;border-radius:8px}
+  .status{font-family:var(--mono);font-size:13px;color:var(--muted)}
+  .status.err{color:var(--coral)}
+  .saved{font-family:var(--mono);font-size:11px;color:var(--teal);letter-spacing:.08em}
+
+  /* now playing */
+  .nowplaying{display:flex;gap:16px;align-items:center;background:var(--panel);border:2px solid var(--edge);
+    border-radius:var(--r);padding:16px;box-shadow:var(--shadow);flex-wrap:wrap}
+  .cover{width:68px;height:68px;border-radius:12px;display:grid;place-items:center;flex:0 0 68px;
+    font-family:var(--display);font-weight:800;font-size:26px;color:#1A0E24}
+  .cover.lg{width:52px;height:52px;flex-basis:52px;font-size:20px;border-radius:10px}
+  .npbody{flex:1 1 220px;min-width:0}
+  .npbody h2{font-size:25px}
+  .npacts{display:flex;gap:9px;flex-wrap:wrap}
+
+  /* hoots */
+  .hootslot{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:2px solid var(--edge);
+    border-radius:12px;padding:8px 13px 8px 9px}
+  .hootslot:hover{border-color:var(--marigold)}
+  .hootart{width:44px;height:44px;flex:0 0 44px;display:block}
+  .hootart svg{width:100%;height:100%;display:block}
+  .hootname{font-family:var(--display);font-weight:800;font-size:16px;text-align:left;line-height:1.1}
+  .hootname small{display:block;font-family:var(--mono);font-size:9.5px;font-weight:400;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .hootpanel{background:var(--panel);border:2px solid var(--edge);border-radius:var(--r);padding:18px;margin-top:14px;
+    display:flex;flex-direction:column;gap:14px}
+  .hootgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(124px,1fr));gap:10px}
+  .hoot{background:var(--panel-2);border:2px solid var(--edge);border-radius:12px;padding:12px 8px;
+    display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center}
+  .hoot.on{border-color:var(--marigold);background:rgba(255,182,39,.12)}
+  .hoot .art{width:66px;height:66px}
+  .hoot .art svg{width:100%;height:100%;display:block}
+  .hoot b{font-family:var(--display);font-size:15px}
+  .hoot small{font-size:10.5px;color:var(--muted);line-height:1.32}
+  .hoot.locked{cursor:not-allowed}
+  .hoot.locked .art{filter:grayscale(1);opacity:.22}
+  .hoot.locked b{color:var(--muted)}
+  .hud .hootart{width:34px;height:34px;flex-basis:34px}
+  .scorecard .hootart{width:86px;height:86px;margin:0 auto 2px}
+  .unlocked{background:rgba(35,210,181,.14);border:2px solid var(--good);border-radius:12px;
+    padding:12px 15px;display:flex;align-items:center;gap:13px;margin-top:18px;text-align:left}
+  .unlocked .hootart{width:50px;height:50px;flex-basis:50px}
+  .unlocked b{font-family:var(--display);font-size:17px;color:var(--good);display:block}
+  .unlocked span{font-size:13px;color:var(--muted)}
+  .turnbar .hootart{width:36px;height:36px;flex-basis:36px}
+  .board .hootart{width:32px;height:32px;flex-basis:32px}
+
+  /* modes */
+  .modes-head{display:flex;align-items:baseline;gap:14px;margin:30px 0 14px;flex-wrap:wrap}
+  .modes-head h2{font-size:25px}
+  .modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(252px,1fr));gap:14px}
+  .mode{border-radius:var(--r);padding:17px;display:flex;flex-direction:column;gap:7px;
+    box-shadow:var(--shadow);color:#1A0E24;transition:transform .1s ease}
+  .mode:hover{transform:translateY(-3px)}
+  .mode h3{font-size:25px}
+  .mode .kick{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;opacity:.7}
+  .mode .blurb{font-size:13.5px;opacity:.88;flex:1}
+  .mode .opt{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600}
+  .mode .opt select{background:rgba(26,14,36,.15);border:2px solid rgba(26,14,36,.35);color:inherit;
+    border-radius:8px;padding:5px 8px;font-size:12px;font-weight:600}
+  .mode .play{background:#1A0E24;color:var(--cream);border-radius:10px;padding:9px 14px;
+    font-weight:600;font-size:14px;align-self:flex-start;margin-top:4px}
+  .mode .play[disabled]{opacity:.5}
+  .mode .warn{font-family:var(--mono);font-size:11px;opacity:.75}
+  .m-roam{background:var(--cream)} .m-chase{background:#8E7BE8} .m-circuit{background:#5BD6C0} .m-hoard{background:#FFC94D}
+  .m-blitz{background:var(--coral)} .m-tycoon{background:var(--teal)} .m-survival{background:var(--marigold)}
+  .m-sudden{background:var(--magenta)} .m-boss{background:var(--grape)} .m-climb{background:var(--sky)}
+  .m-snap{background:var(--lime)} .m-study{background:var(--sand)} .m-relay{background:var(--orange)}
+
+  /* kit editor */
+  .qlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+  .qrow{background:var(--panel);border:2px solid var(--edge);border-radius:12px;padding:12px 14px;
+    display:flex;gap:12px;align-items:flex-start}
+  .qrow.sel{border-color:var(--marigold)}
+  .qrow input[type=checkbox]{width:18px;height:18px;margin-top:3px;flex:0 0 18px;accent-color:var(--marigold)}
+  .qmain{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px}
+  .qtop{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .qnum{font-family:var(--mono);font-size:12px;color:var(--marigold)}
+  .qkind{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    border:1px solid var(--edge);border-radius:99px;padding:2px 8px;color:var(--muted)}
+  .qkind.text{color:var(--sky);border-color:var(--sky)}
+  .qtext{font-size:15px;font-weight:500}
+  .qans{display:flex;flex-wrap:wrap;gap:6px}
+  .anschip{font-size:12.5px;border:1px solid var(--edge);border-radius:99px;padding:4px 11px;color:var(--muted)}
+  .anschip.right{border-color:var(--good);color:var(--good)}
+  .qtools{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+  .qtools button{border:1px solid var(--edge);background:var(--panel-2);color:var(--muted);
+    border-radius:8px;padding:5px 9px;font-size:12px}
+  .qtools button:hover{color:var(--cream)}
+  .bulkbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;background:var(--panel-2);
+    border:2px solid var(--marigold);border-radius:12px;padding:11px 14px;margin-bottom:12px}
+  .bulkbar b{font-family:var(--mono);font-size:13px}
+  .qeditor{background:var(--panel-2);border:2px solid var(--marigold);border-radius:var(--r);
+    padding:18px;display:flex;flex-direction:column;gap:13px;margin-bottom:14px}
+  .qeditor h3{font-size:19px}
+  .ansrow{display:flex;gap:9px;align-items:center}
+  .ansrow .tick{flex:0 0 40px;height:42px;border-radius:10px;border:2px solid var(--edge);
+    background:var(--ground);color:var(--muted);font-size:17px;font-weight:700}
+  .ansrow .tick.on{background:var(--good);border-color:var(--good);color:#04302A}
+  .ansrow input{flex:1;background:var(--ground);border:2px solid var(--edge);color:var(--cream);
+    border-radius:10px;padding:11px 12px;min-width:0}
+  .hint{font-size:12.5px;color:var(--muted)}
+
+  /* discover */
+  .libbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  .libbar input{flex:1 1 220px;background:var(--panel);border:2px solid var(--edge);color:var(--cream);
+    border-radius:10px;padding:10px 13px}
+  .libbar input::placeholder{color:#7C6690}
+  .chips{display:flex;gap:7px;flex-wrap:wrap}
+  .chip{border:2px solid var(--edge);background:var(--panel);color:var(--muted);border-radius:99px;
+    padding:7px 14px;font-size:13px;font-weight:600}
+  .chip.on{background:var(--marigold);border-color:var(--marigold);color:#2A1200}
+  .kits{display:grid;grid-template-columns:repeat(auto-fill,minmax(262px,1fr));gap:12px}
+  .kit{background:var(--panel);border:2px solid var(--edge);border-radius:var(--r);padding:15px;
+    display:flex;flex-direction:column;gap:10px}
+  .kit .khead{display:flex;gap:12px;align-items:center}
+  .kit h4{font-size:18px;line-height:1.15}
+  .kit .facts{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+  .kit .tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--marigold)}
+  .kit.shared .tag{color:var(--teal)}
+  .kit .acts{display:flex;gap:7px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
+  .libmsg{color:var(--muted);font-size:14px;background:var(--panel);border:1px dashed var(--edge);
+    border-radius:var(--r);padding:16px}
+  details.fold summary{cursor:pointer;color:var(--muted);font-size:13px;list-style:none}
+  details.fold summary::-webkit-details-marker{display:none}
+  details.fold summary::before{content:"+ ";color:var(--marigold)}
+  details.fold[open] summary::before{content:"\2013 "}
+
+  /* stage */
+  .stage{display:flex;flex-direction:column;gap:16px}
+  .hud{display:flex;gap:20px;align-items:center;flex-wrap:wrap;background:var(--panel);
+    border:2px solid var(--edge);border-radius:var(--r);padding:12px 16px}
+  .stat{display:flex;flex-direction:column;line-height:1.15;gap:2px}
+  .stat b{font-family:var(--mono);font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+  .stat span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .hud .spacer{margin-left:auto}
+  .stat.cash b{color:var(--marigold)} .stat.streak b{color:var(--coral)} .stat.danger b{color:var(--coral)}
+  .goalbar{flex:1 1 150px;min-width:130px;display:flex;flex-direction:column;gap:4px}
+  .goalbar span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .track{height:9px;background:var(--ground);border-radius:99px;overflow:hidden;border:1px solid var(--edge)}
+  .track i{display:block;height:100%;background:var(--teal);width:0%;transition:width .35s ease}
+  .extra{display:flex;flex-direction:column;gap:10px}
+  .extra:empty{display:none}
+  .hearts{display:flex;gap:7px;font-size:23px;line-height:1}
+  .hearts i{font-style:normal;color:var(--coral)}
+  .hearts i.gone{opacity:.2;color:var(--muted)}
+  .duel{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:560px){.duel{grid-template-columns:1fr}}
+  .fighter{background:var(--panel);border:2px solid var(--edge);border-radius:var(--r);padding:12px 14px;
+    display:flex;flex-direction:column;gap:6px}
+  .fighter .who{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .fighter .who b{font-family:var(--display);font-size:17px}
+  .fighter .who em{font-style:normal;font-family:var(--mono);font-size:13px;color:var(--muted)}
+  .fighter .track i{background:var(--coral)}
+  .fighter.me .track i{background:var(--teal)}
+  .ladder{display:flex;gap:4px;align-items:flex-end;background:var(--panel);border:2px solid var(--edge);
+    border-radius:var(--r);padding:14px}
+  .ladder i{flex:1;border-radius:4px;background:var(--panel-2);border:1px solid var(--edge)}
+  .ladder i.on{background:var(--sky);border-color:var(--sky)}
+  .ladder i.you{background:var(--marigold);border-color:var(--marigold);box-shadow:0 0 14px rgba(255,182,39,.6)}
+  .turnbar{background:var(--panel);border:2px solid var(--edge);border-left-width:10px;border-radius:var(--r);
+    padding:12px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .turnbar b{font-family:var(--display);font-size:22px}
+  .turnbar .scores{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:13px;color:var(--muted)}
+  .turnbar .scores b{font-family:var(--mono);font-size:13px;color:var(--cream)}
+  /* arena */
+  .worldbox{display:flex;flex-direction:column;gap:12px}
+  .worldbox canvas{
+    width:100%;height:auto;aspect-ratio:640/420;display:block;
+    background:var(--panel);border:2px solid var(--edge);border-radius:var(--r);
+    box-shadow:var(--shadow);touch-action:none;
+  }
+  .worldhint{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:center}
+  .dpad{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,52px);
+    gap:7px;justify-content:center;justify-items:stretch}
+  .dpad button{background:var(--panel-2);border:2px solid var(--edge);border-radius:12px;
+    color:var(--cream);font-size:17px;line-height:1;touch-action:none;user-select:none}
+  .dpad button:active,.dpad button.held{background:var(--marigold);border-color:var(--marigold);color:#2A1200}
+  .dpad .u{grid-area:1/2} .dpad .l{grid-area:2/1} .dpad .d{grid-area:2/2} .dpad .r{grid-area:2/3}
+  @media (min-width:700px){ .dpad{display:none} }
+
+  .qcard{background:var(--cream);color:#241130;border-radius:var(--r);padding:26px 22px;text-align:center;box-shadow:var(--shadow)}
+  .qcount{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#7A5C8F;margin-bottom:10px}
+  .qbig{font-size:clamp(21px,4.2vw,32px)}
+  .qclaim{margin-top:14px;font-family:var(--mono);font-size:clamp(16px,3vw,22px);background:#241130;
+    color:var(--cream);border-radius:10px;padding:10px 14px;display:inline-block}
+  .timerbar{height:12px;background:var(--panel);border:2px solid var(--edge);border-radius:99px;overflow:hidden}
+  .timerbar i{display:block;height:100%;width:100%;background:var(--marigold)}
+  .timerbar.low i{background:var(--coral)}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:560px){.tiles{grid-template-columns:1fr}}
+  .tile{display:flex;align-items:center;gap:12px;text-align:left;padding:18px 16px;border-radius:var(--r);
+    font-weight:600;font-size:17px;min-height:76px;box-shadow:var(--shadow);transition:transform .08s ease, opacity .2s ease}
+  .tile:active{transform:translateY(3px)}
+  .tile svg{flex:0 0 26px;width:26px;height:26px}
+  .tile.c0{background:var(--coral);color:#33060C} .tile.c1{background:var(--teal);color:#04302A}
+  .tile.c2{background:var(--marigold);color:#2A1200} .tile.c3{background:var(--grape);color:#170733}
+  .tiles.locked .tile{cursor:default}
+  .tiles.locked .tile.dim{opacity:.28}
+  .tiles.locked .tile.right{outline:4px solid var(--cream);outline-offset:2px}
+  .answerbox{display:flex;gap:10px;flex-wrap:wrap}
+  .answerbox input{flex:1 1 240px;background:var(--cream);color:#241130;border:none;border-radius:var(--r);
+    padding:20px 18px;font-size:19px;font-weight:600;box-shadow:var(--shadow)}
+  .answerbox input::placeholder{color:#8C74A0;font-weight:400}
+  .answerbox input[disabled]{opacity:.75}
+  .answerbox .btn{padding:20px 26px;font-size:17px}
+  .feedback{background:var(--panel);border:2px solid var(--edge);border-left-width:8px;border-radius:var(--r);
+    padding:18px;display:flex;flex-direction:column;gap:12px}
+  .feedback.win{border-left-color:var(--good)} .feedback.lose{border-left-color:var(--bad)}
+  .verdict{font-family:var(--display);font-size:26px;font-weight:800}
+  .feedback.win .verdict{color:var(--good)} .feedback.lose .verdict{color:var(--bad)}
+  .verdict em{font-style:normal;font-family:var(--mono);font-size:15px;color:var(--cream);margin-left:10px}
+  .why{font-size:15px;opacity:.9}
+  .fb-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .fb-actions .btn-go{margin-left:auto}
+  .shop{background:var(--panel);border:2px solid var(--marigold);border-radius:var(--r);padding:18px;
+    display:flex;flex-direction:column;gap:12px}
+  .shop h3{font-size:22px}
+  .shelf{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+  .up{background:var(--panel-2);border:1px solid var(--edge);border-radius:12px;padding:12px;
+    display:flex;flex-direction:column;gap:6px;text-align:left}
+  .up strong{font-size:15px}
+  .up .lvl{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .up .now{font-size:13px;color:var(--teal)}
+  .up .buy{font-family:var(--mono);font-size:13px;margin-top:4px;color:var(--marigold)}
+  .up[disabled]{opacity:.42}
+  .up.maxed .buy{color:var(--muted)}
+  .scorecard{background:var(--panel);border:2px solid var(--edge);border-radius:var(--r);padding:26px;
+    text-align:center;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow)}
+  .bigscore{font-family:var(--mono);font-weight:700;font-size:clamp(42px,11vw,70px);line-height:1;
+    color:var(--marigold);font-variant-numeric:tabular-nums}
+  .scorecard .sub{color:var(--muted);font-size:14px}
+  .pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+  .pill{background:var(--panel-2);border:1px solid var(--edge);border-radius:99px;padding:7px 14px;font-size:13px}
+  .pill b{font-family:var(--mono);color:var(--cream)}
+  .board{list-style:none;padding:0;margin:0 0 6px;display:flex;flex-direction:column;gap:8px}
+  .board li{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--edge);
+    border-left:6px solid var(--marigold);border-radius:10px;padding:11px 14px}
+  .board .rank{font-family:var(--mono);color:var(--muted);font-size:13px}
+  .board .pts{margin-left:auto;font-family:var(--mono);font-weight:700}
+  .review{display:flex;flex-direction:column;gap:8px;padding:0;margin:0}
+  .review li{background:var(--panel);border:1px solid var(--edge);border-left:5px solid var(--bad);
+    border-radius:10px;padding:11px 13px;font-size:14px;list-style:none}
+  .review li.ok{border-left-color:var(--good)}
+  .review .ans{color:var(--muted);font-size:13px;margin-top:3px}
+  .review .ans b{color:var(--teal)}
+  .endbtns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  footer{margin-top:34px;text-align:center;color:var(--muted);font-size:12px;font-family:var(--mono)}
+  @media (prefers-reduced-motion: reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="marquee">
+    <div class="bulbs" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <h1 class="logo">GIM<span>HOOT</span></h1>
+    <p class="tagline">Thirteen ways to play &middot; pass every kit on</p>
+  </header>
+
+  <main>
+  <section id="s-setup">
+    <nav class="tabs">
+      <button class="tab on" id="tab-play">Play</button>
+      <button class="tab" id="tab-make">Make</button>
+      <button class="tab" id="tab-find">Discover</button>
+    </nav>
+
+    <!-- ========== PLAY ========== -->
+    <div id="t-play">
+      <div class="nowplaying">
+        <div class="cover" id="np-cover"></div>
+        <div class="npbody">
+          <p class="eyebrow">Loaded kit</p>
+          <h2 id="np-title"></h2>
+          <p class="meta" id="np-meta"></p>
+        </div>
+        <div class="npacts">
+          <button class="btn btn-ghost btn-sm" id="np-edit">Edit this kit</button>
+          <button class="btn btn-ghost btn-sm" id="np-swap">Pick another</button>
+        </div>
+        <button class="hootslot" id="hootslot">
+          <span class="hootart" id="hoot-art"></span>
+          <span class="hootname" id="hoot-name"><small>Your hoot</small></span>
+        </button>
+      </div>
+
+      <div class="hootpanel" id="hootpanel" hidden>
+        <div class="modes-head" style="margin:0">
+          <h2>Your hoots</h2>
+          <p class="meta" id="hoot-meta"></p>
+          <button class="btn btn-ghost btn-sm" id="hoot-close" style="margin-left:auto">Done</button>
+        </div>
+        <div class="hootgrid" id="hootgrid"></div>
+      </div>
+
+      <div class="modes-head">
+        <h2>Pick your game</h2>
+        <p class="meta">Every mode plays the loaded kit &mdash; the rules change, the questions don't.</p>
+      </div>
+      <div class="modes" id="modes"></div>
+    </div>
+
+    <!-- ========== MAKE ========== -->
+    <div id="t-make" hidden>
+      <div class="deck">
+        <div class="card">
+          <p class="eyebrow">Bulk add</p>
+          <h2>Paste a list</h2>
+          <p class="hint">One question per line. Pipes, tabs or a spreadsheet paste all work.</p>
+          <div class="field">
+            <label for="bulk-in">Questions</label>
+            <textarea id="bulk-in" class="ta" rows="7" spellcheck="false" placeholder="Capital of Cyprus? | Nicosia | Larnaca | Limassol | Paphos&#10;Largest planet? | Jupiter | Saturn | Earth&#10;Chemical symbol for gold? &gt; Au, aurum"></textarea>
+          </div>
+          <details class="fold">
+            <summary>How to write the lines</summary>
+            <div class="hint" style="margin-top:10px;line-height:1.8">
+              <b>Multiple choice</b> &mdash; the question, then the correct answer, then the wrong ones:<br>
+              <code>What is 7 &times; 8? | 56 | 54 | 63 | 49</code><br>
+              <b>More than one right answer</b> &mdash; mark each correct one with <code>*</code>:<br>
+              <code>Which are prime? | *7 | *11 | 9 | 15</code><br>
+              <b>Typed answers</b> &mdash; use <code>&gt;</code> and list what you will accept:<br>
+              <code>Capital of Japan? &gt; Tokyo</code><br>
+              <b>An explanation</b> &mdash; add <code>//</code> at the end of any line:<br>
+              <code>What is the Sun? | A star | A planet // An ordinary star, very close to us.</code>
+            </div>
+          </details>
+          <div class="row">
+            <button id="bulk-add" class="btn btn-go" style="flex:1">Add these to the kit</button>
+            <button id="bulk-clear" class="btn btn-ghost">Clear</button>
+          </div>
+          <p id="bulkstatus" class="status" hidden></p>
+        </div>
+
+        <div class="card">
+          <p class="eyebrow">Kit details</p>
+          <h2>Name and file it</h2>
+          <div class="field">
+            <label for="k-title">Kit name</label>
+            <input id="k-title" type="text" autocomplete="off" maxlength="70">
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="k-subject">Subject</label>
+              <select id="k-subject"></select>
+            </div>
+            <div class="field">
+              <label for="k-language">Language</label>
+              <select id="k-language">
+                <option>English</option><option>Greek</option><option>German</option>
+                <option>French</option><option>Spanish</option><option>Italian</option>
+                <option>Portuguese</option><option>Arabic</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="row" style="align-items:center">
+            <div class="cover lg" id="k-cover"></div>
+            <p class="hint" style="flex:1">The cover colour comes from the subject, so a shared kit stays recognisable without carrying a picture.</p>
+          </div>
+          <div class="row">
+            <button id="share-open" class="btn btn-go btn-sm">Publish &mdash; get a share link</button>
+            <button id="kit-new" class="btn btn-ghost btn-sm">Start a blank kit</button>
+          </div>
+          <div id="share-form" hidden style="display:flex;flex-direction:column;gap:10px">
+            <p class="meta">Anyone who opens this link gets the kit on their own shelf, ready to play and to pass on again.</p>
+            <textarea id="share-link" class="ta" rows="3" readonly></textarea>
+            <div class="row">
+              <button id="share-copy" class="btn btn-go btn-sm">Copy link</button>
+              <button id="share-code" class="btn btn-ghost btn-sm">Copy the code only</button>
+              <button id="share-close" class="btn btn-ghost btn-sm">Done</button>
+            </div>
+          </div>
+          <p id="share-status" class="status" hidden></p>
+        </div>
+      </div>
+
+      <div class="modes-head">
+        <h2>Questions</h2>
+        <p class="meta" id="q-count"></p>
+        <p class="saved" id="q-saved" style="margin-left:auto"></p>
+      </div>
+
+      <div class="qeditor" id="qeditor" hidden>
+        <h3 id="e-head">Add a question</h3>
+        <div class="field">
+          <label for="e-q">Question</label>
+          <textarea id="e-q" rows="2" class="ta" style="font-family:var(--body);font-size:15px"></textarea>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:0 0 220px">
+            <label for="e-type">Answer type</label>
+            <select id="e-type">
+              <option value="mc">Multiple choice</option>
+              <option value="text">Text input</option>
+            </select>
+          </div>
+        </div>
+        <div id="e-mc">
+          <p class="hint" style="margin-bottom:9px">Tick every answer that counts as correct &mdash; you can tick more than one. Leave a box empty to drop that option.</p>
+          <div style="display:flex;flex-direction:column;gap:8px" id="e-rows"></div>
+        </div>
+        <div id="e-text" hidden>
+          <div class="field">
+            <label for="e-accept">Accepted answers, one per line</label>
+            <textarea id="e-accept" rows="3" class="ta" style="font-family:var(--body);font-size:15px"></textarea>
+          </div>
+          <p class="hint" style="margin-top:8px">Upper and lower case, and extra spaces, are ignored when checking.</p>
+        </div>
+        <div class="field">
+          <label for="e-why">Explanation shown after the answer (optional)</label>
+          <input id="e-why" type="text" autocomplete="off" maxlength="200">
+        </div>
+        <p id="e-status" class="status" hidden></p>
+        <div class="row">
+          <button id="e-save" class="btn btn-go btn-sm">Save question</button>
+          <button id="e-cancel" class="btn btn-ghost btn-sm">Cancel</button>
+        </div>
+      </div>
+
+      <div class="bulkbar" id="bulkbar" hidden>
+        <b id="bulk-count"></b>
+        <button class="btn btn-ghost btn-tiny" id="bulk-text">Convert to text input</button>
+        <button class="btn btn-ghost btn-tiny" id="bulk-del">Delete</button>
+        <button class="btn btn-ghost btn-tiny" id="bulk-none">Clear selection</button>
+      </div>
+
+      <ul class="qlist" id="qlist"></ul>
+      <p class="libmsg" id="q-empty" hidden>No questions yet. Write one, or let Claude fill the kit above.</p>
+      <div class="row" style="margin-top:14px">
+        <button id="q-add" class="btn btn-go btn-sm">Add a question</button>
+        <button id="q-all" class="btn btn-ghost btn-sm">Select all</button>
+      </div>
+    </div>
+
+    <!-- ========== DISCOVER ========== -->
+    <div id="t-find" hidden>
+      <div class="libbar">
+        <input id="lib-search" type="search" placeholder="Search kits by name or subject" autocomplete="off">
+      </div>
+      <div class="chips" id="subject-chips" style="margin-bottom:14px"></div>
+      <div class="chips" style="margin-bottom:16px">
+        <button class="chip on" id="src-all">All kits</button>
+        <button class="chip" id="src-featured">Featured</button>
+        <button class="chip" id="src-shared">Shared with you</button>
+      </div>
+      <div class="kits" id="kits"></div>
+      <p class="libmsg" id="lib-msg" hidden></p>
+
+      <details class="fold" style="margin-top:18px">
+        <summary>Paste a kit someone sent you, or hand your whole shelf on</summary>
+        <div class="field" style="margin-top:12px">
+          <label for="imp-code">Their link or code</label>
+          <textarea id="imp-code" class="ta" rows="3"></textarea>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button id="imp-go" class="btn btn-go btn-sm">Add to my shelf</button>
+          <button id="exp-all" class="btn btn-ghost btn-sm">Copy my whole shelf as one code</button>
+        </div>
+        <p id="imp-status" class="status" hidden style="margin-top:10px"></p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ========== PLAY SCREEN ========== -->
+  <section id="s-play" hidden>
+    <div class="stage">
+      <div class="hud" id="hud"></div>
+      <div class="extra" id="extra"></div>
+      <div class="worldbox" id="world" hidden>
+        <canvas id="wcanvas" width="640" height="420" aria-label="The arena"></canvas>
+        <div class="dpad" id="dpad">
+          <button class="u" data-d="u" aria-label="Move up">&#9650;</button>
+          <button class="l" data-d="l" aria-label="Move left">&#9664;</button>
+          <button class="d" data-d="d" aria-label="Move down">&#9660;</button>
+          <button class="r" data-d="r" aria-label="Move right">&#9654;</button>
+        </div>
+        <p class="worldhint" id="worldhint"></p>
+      </div>
+      <div class="qcard" id="qcard">
+        <p class="qcount" id="qcount"></p>
+        <h2 class="qbig" id="qtext"></h2>
+        <div id="qclaim" hidden></div>
+      </div>
+      <div class="timerbar" id="timerbar" hidden><i id="timerfill"></i></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="feedback" id="feedback" hidden>
+        <p class="verdict" id="fb-verdict"></p>
+        <p class="why" id="fb-why"></p>
+        <div class="fb-actions">
+          <button id="fb-next" class="btn btn-go">Next question</button>
+        </div>
+      </div>
+      <div class="shop" id="shop" hidden>
+        <h3>The Upgrade Shop</h3>
+        <p class="meta">Spend your winnings. Upgrades last for the rest of the run.</p>
+        <div class="shelf" id="shelf"></div>
+        <button id="shop-close" class="btn btn-ghost btn-sm" style="align-self:flex-start">Back to the questions</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== RESULTS ========== -->
+  <section id="s-results" hidden>
+    <div class="scorecard">
+      <span class="hootart" id="r-hoot"></span>
+      <p class="eyebrow" id="r-mode"></p>
+      <p class="bigscore" id="r-score"></p>
+      <p class="sub" id="r-sub"></p>
+      <div class="pills" id="r-pills"></div>
+    </div>
+    <div id="r-unlocks"></div>
+    <ul class="board" id="r-board" style="margin-top:22px"></ul>
+    <h3 id="r-revhead" style="margin:26px 0 12px;font-size:20px">How it went</h3>
+    <ul class="review" id="r-review"></ul>
+    <div class="endbtns" style="margin-top:26px">
+      <button id="r-again" class="btn btn-go">Play again</button>
+      <button id="r-home" class="btn btn-ghost">Back to the modes</button>
+    </div>
+  </section>
+  </main>
+
+  <footer>Gimhoot &middot; make a kit, play it thirteen ways, pass it on</footer>
+</div>
+
+<script>
+// Built-in Discover catalogue. Compact helpers keep the source readable.
+function mc(q, right, wrongs, why){
+  var opts = [{ t:right, c:true }];
+  wrongs.forEach(function(w){ opts.push({ t:w, c:false }); });
+  return { q:q, type:"mc", options:opts, why:why || "" };
+}
+function mcm(q, rights, wrongs, why){
+  var opts = rights.map(function(r){ return { t:r, c:true }; });
+  wrongs.forEach(function(w){ opts.push({ t:w, c:false }); });
+  return { q:q, type:"mc", options:opts, why:why || "" };
+}
+function tx(q, accept, why){
+  return { q:q, type:"text", accept:accept, why:why || "" };
+}
+
+var CATALOG = [
+{
+  id:"cat-times", title:"Times Tables Trainer", subject:"Maths", language:"English", featured:true,
+  questions:[
+    mc("What is 7 × 8?", "56", ["54","63","49"], "Eight eights are 64, and 56 is one eight less."),
+    tx("What is 9 × 6?", ["54"], "Nine sixes: 54. Ten sixes would be 60, minus one six."),
+    mc("What is 12 × 11?", "132", ["121","144","122"], "Twelve elevens is twelve tens plus twelve ones: 120 + 12."),
+    tx("What is 48 ÷ 6?", ["8"], "Six eights are 48, so 48 shared into sixes gives 8."),
+    mc("Which of these is NOT a multiple of 4?", "26", ["16","24","32"], "26 ÷ 4 leaves a remainder of 2; the others divide exactly."),
+    tx("What is 6 × 7?", ["42"], "Six sevens are 42."),
+    mc("What is 9 × 9?", "81", ["72","89","99"], "Nine nines are 81 — ten nines (90) minus one nine."),
+    mc("What is 100 ÷ 4?", "25", ["20","40","50"], "Four twenty-fives make 100.")
+  ]
+},
+{
+  id:"cat-fractions", title:"Fractions First Steps", subject:"Maths", language:"English",
+  questions:[
+    mc("Which fraction is the largest?", "3/4", ["1/2","2/5","5/8"], "3/4 is 0.75; the next biggest here, 5/8, is only 0.625."),
+    tx("Simplify 6/8 as far as it will go.", ["3/4"], "Both numbers divide by 2, giving 3/4."),
+    mc("What is 1/2 + 1/4?", "3/4", ["2/6","1/6","1/8"], "A half is two quarters, so two quarters plus one quarter is three quarters."),
+    mc("Which fraction is equivalent to 1/3?", "4/12", ["3/12","2/8","5/12"], "Multiply top and bottom of 1/3 by 4 and you get 4/12."),
+    tx("What is half of 3/4?", ["3/8"], "Halving a fraction doubles the bottom number: 3/4 becomes 3/8."),
+    mc("What is 0.25 written as a fraction?", "1/4", ["1/2","2/5","1/25"], "0.25 is twenty-five hundredths, which simplifies to one quarter."),
+    mc("Which of these fractions equals exactly 1?", "7/7", ["7/8","8/7","0/7"], "Any fraction with the same number on top and bottom equals one whole."),
+    tx("What is 2/3 of 9?", ["6"], "A third of 9 is 3, so two thirds is 6.")
+  ]
+},
+{
+  id:"cat-body", title:"The Human Body", subject:"Science", language:"English", featured:true,
+  questions:[
+    mc("Which organ pumps blood around the body?", "The heart", ["The lungs","The liver","The kidneys"], "The heart is a muscle that squeezes blood out to the whole body."),
+    tx("How many bones are there in a typical adult human body?", ["206"], "Babies are born with around 270; some fuse together as we grow."),
+    mc("What do the lungs take out of the air you breathe in?", "Oxygen", ["Nitrogen","Carbon dioxide","Water"], "Oxygen passes into the blood; carbon dioxide travels the other way, out."),
+    mc("Where are most red blood cells made?", "In bone marrow", ["In the liver","In the spleen","In the pancreas"], "Bone marrow, the soft tissue inside large bones, produces them constantly."),
+    tx("What is the largest organ of the human body?", ["skin","the skin"], "Skin covers the whole body and counts as a single organ."),
+    mc("What does the small intestine mainly do?", "Absorbs nutrients from food", ["Stores waste","Pumps blood","Filters air"], "Its lining is folded into millions of tiny fingers that soak up nutrients."),
+    mcm("Which of these carry blood back towards the heart?", ["Veins"], ["Arteries","Nerves","Tendons"], "Arteries carry blood away from the heart; veins bring it back."),
+    mc("Roughly what share of the human body is water?", "About 60%", ["About 20%","About 40%","About 90%"], "It varies with age and body type, but around 60% is typical for an adult.")
+  ]
+},
+{
+  id:"cat-space", title:"Space and the Solar System", subject:"Science", language:"English", featured:true,
+  questions:[
+    mc("Which planet is closest to the Sun?", "Mercury", ["Venus","Earth","Mars"], "Mercury orbits at about 58 million km, closer than any other planet."),
+    mc("What is the largest planet in the Solar System?", "Jupiter", ["Saturn","Neptune","Earth"], "Jupiter is so big that all the other planets would fit inside it with room to spare."),
+    mc("Why does the Moon shine at night?", "It reflects sunlight", ["It is burning","It makes its own light","It glows from heat"], "The Moon has no light of its own; we see sunlight bouncing off its surface."),
+    tx("How many planets orbit the Sun?", ["8","eight"], "Eight, since Pluto was reclassified as a dwarf planet in 2006."),
+    mc("Which planet is famous for its bright ring system?", "Saturn", ["Mars","Venus","Mercury"], "Saturn's rings are made mostly of chunks of ice and rock in orbit."),
+    tx("How long does Earth take to orbit the Sun once, in days?", ["365","365.25","about 365"], "One orbit is a year, which is why the calendar runs to about 365 days."),
+    mc("What is the Sun?", "A star", ["A planet","A moon","A comet"], "The Sun is an ordinary star that happens to be very close to us."),
+    mc("What causes day and night on Earth?", "Earth spinning on its axis", ["Earth orbiting the Sun","The Moon blocking the Sun","Clouds covering the sky"], "Earth turns once every 24 hours, so each place faces the Sun and then away from it.")
+  ]
+},
+{
+  id:"cat-weather", title:"Weather and the Water Cycle", subject:"Science", language:"English",
+  questions:[
+    mc("What is it called when liquid water turns into vapour?", "Evaporation", ["Condensation","Precipitation","Collection"], "Heat gives water molecules enough energy to escape into the air as vapour."),
+    mc("Clouds form when water vapour…", "Cools and condenses", ["Heats up","Freezes solid","Disappears"], "Rising air cools, and the vapour condenses into tiny droplets around dust."),
+    tx("What word covers rain, snow, sleet and hail falling from clouds?", ["precipitation"], "Precipitation is the catch-all term for water falling out of the sky."),
+    mc("Which instrument measures air pressure?", "A barometer", ["A thermometer","An anemometer","A rain gauge"], "Falling pressure on a barometer often means unsettled weather is coming."),
+    mc("What does an anemometer measure?", "Wind speed", ["Rainfall","Temperature","Air pressure"], "Its spinning cups turn faster in stronger wind."),
+    tx("At what temperature in degrees Celsius does water freeze?", ["0","zero","0c","0 degrees"], "Zero degrees Celsius is defined as the freezing point of water."),
+    mc("Why does it usually get colder as you climb a mountain?", "The air is thinner and holds less heat", ["You are much closer to the Sun","There is more oxygen up there","The wind is always stronger"], "Thinner air at altitude holds far less warmth, so temperature drops as you climb."),
+    mc("What causes wind?", "Differences in air pressure", ["Trees moving","Clouds bumping together","The Sun setting"], "Air flows from areas of high pressure towards areas of low pressure.")
+  ]
+},
+{
+  id:"cat-capitals", title:"Capitals of the World", subject:"Geography", language:"English", featured:true,
+  questions:[
+    tx("What is the capital of Japan?", ["tokyo"], "Tokyo has been the seat of government since 1868."),
+    mc("What is the capital of Australia?", "Canberra", ["Sydney","Melbourne","Perth"], "Canberra was purpose-built as a compromise between Sydney and Melbourne."),
+    mc("What is the capital of Canada?", "Ottawa", ["Toronto","Montreal","Vancouver"], "Ottawa was chosen in 1857, partly for sitting between English and French Canada."),
+    tx("What is the capital of Cyprus?", ["nicosia","lefkosia","lefkosa"], "Nicosia, known as Lefkosia in Greek, is the island's capital."),
+    mc("What is the capital of Brazil?", "Brasília", ["Rio de Janeiro","São Paulo","Salvador"], "Brasília was built inland in the 1950s and took over from Rio in 1960."),
+    mc("What is the capital of Switzerland?", "Bern", ["Zurich","Geneva","Basel"], "Bern is the seat of government, though Zurich is the largest city."),
+    tx("What is the capital of Egypt?", ["cairo"], "Cairo sits on the Nile and is the largest city in the Arab world."),
+    mc("What is the capital of New Zealand?", "Wellington", ["Auckland","Christchurch","Dunedin"], "Wellington took the role from Auckland in 1865 for its central position.")
+  ]
+},
+{
+  id:"cat-egypt", title:"Ancient Egypt", subject:"History", language:"English",
+  questions:[
+    mc("What were the kings of ancient Egypt called?", "Pharaohs", ["Emperors","Consuls","Sultans"], "The word comes from an Egyptian phrase meaning 'great house'."),
+    tx("Which river was ancient Egypt built along?", ["nile","the nile"], "The Nile's yearly flood left fertile silt that made farming possible."),
+    mc("What is the picture-writing of ancient Egypt called?", "Hieroglyphs", ["Cuneiform","Runes","Linear B"], "Cuneiform was Mesopotamian; hieroglyphs were Egyptian."),
+    mc("Why were bodies mummified?", "To preserve them for the afterlife", ["To make them lighter to carry","To hide them from thieves","To cure disease"], "Egyptians believed the body had to survive for the spirit to live on."),
+    tx("What is the huge statue at Giza with a lion's body and a human head called?", ["sphinx","the sphinx","great sphinx"], "The Great Sphinx was carved from a single ridge of limestone."),
+    mc("Which discovery finally let scholars read hieroglyphs?", "The Rosetta Stone", ["The Standard of Ur","The Parthenon Marbles","The Behistun Inscription"], "It repeated the same text in Greek, which gave scholars the key."),
+    mc("What was a pyramid built to be?", "A tomb", ["A palace","A granary","A lighthouse"], "Pyramids housed a pharaoh's body and the goods for the afterlife."),
+    mc("Whose almost untouched tomb was found in 1922?", "Tutankhamun", ["Ramesses II","Cleopatra","Khufu"], "Howard Carter found it largely unlooted, which made it extraordinary.")
+  ]
+},
+{
+  id:"cat-myths", title:"Greek Myths", subject:"History", language:"English",
+  questions:[
+    mc("Who was king of the Greek gods?", "Zeus", ["Poseidon","Hades","Apollo"], "Zeus ruled from Mount Olympus; his brothers took the sea and the underworld."),
+    tx("Which hero killed the Minotaur?", ["theseus"], "Theseus found his way back out of the labyrinth using a thread."),
+    mc("Where was Achilles vulnerable?", "His heel", ["His knee","His shoulder","His eye"], "His mother held him by the heel when dipping him in the river Styx."),
+    mc("What happened to anyone who looked straight at Medusa?", "They turned to stone", ["They fell asleep","They forgot their name","They became invisible"], "Perseus beat her by watching her reflection in a polished shield."),
+    tx("Who flew too close to the Sun on wings of wax and feathers?", ["icarus"], "The wax melted and Icarus fell into the sea."),
+    mc("What did Pandora famously open?", "A jar, often retold as a box", ["A locked door","A sealed scroll","A tomb"], "The Greek word was pithos, a storage jar; 'box' came from a later mistranslation."),
+    mc("Who was the goddess of wisdom?", "Athena", ["Hera","Artemis","Demeter"], "Athena sprang fully armed from the head of Zeus."),
+    mc("How many labours did Heracles complete?", "Twelve", ["Seven","Ten","Twenty"], "Ten were set originally; two were disputed, so two more were added.")
+  ]
+},
+{
+  id:"cat-words", title:"Words Worth Knowing", subject:"English", language:"English",
+  questions:[
+    mc("What does 'meticulous' mean?", "Extremely careful about detail", ["Very fast","Slightly rude","Easily bored"], "A meticulous person checks the small things nobody else notices."),
+    mc("Which word means 'lasting only a short time'?", "Fleeting", ["Durable","Perpetual","Chronic"], "Perpetual and chronic both suggest something that goes on and on."),
+    mc("What does 'reluctant' mean?", "Unwilling", ["Eager","Confused","Exhausted"], "A reluctant volunteer is one who would rather not."),
+    tx("Give a word that means the opposite of 'generous'.", ["stingy","mean","selfish","miserly","tight"], "Stingy, mean and miserly all describe someone unwilling to give."),
+    mc("Something 'ambiguous' is…", "Open to more than one meaning", ["Completely clear","Extremely loud","Very old"], "An ambiguous sentence can be read two different ways."),
+    mc("What does 'resilient' mean?", "Able to recover quickly", ["Easily broken","Very heavy","Brightly coloured"], "A resilient material springs back into shape after being bent."),
+    mc("A 'novice' is someone who is…", "New to something", ["An expert","In charge","Retired"], "Novices are beginners; the word comes from the Latin for 'new'."),
+    mc("What does 'candid' mean?", "Honest and direct", ["Secretive","Sweet-tasting","Well lit"], "A candid answer is one that holds nothing back.")
+  ]
+},
+{
+  id:"cat-computers", title:"How Computers Think", subject:"Computing", language:"English",
+  questions:[
+    mc("What does a 'loop' do in a program?", "Repeats instructions", ["Deletes files","Stores text","Prints paper"], "Loops let you write an instruction once and run it many times."),
+    tx("How many bits are in a byte?", ["8","eight"], "Eight bits make a byte, enough for 256 different values."),
+    mc("In programming, what is a 'bug'?", "A mistake in the code", ["An insect in the case","A type of file","A very fast computer"], "The name stuck after early engineers found real insects in machines."),
+    mc("What does binary use?", "Only 0 and 1", ["0 to 9","The letters A to Z","0 to 7"], "Two states are easy for electronics: off and on."),
+    tx("What does CPU stand for?", ["central processing unit"], "The CPU is the part that actually carries out instructions."),
+    mc("What is an algorithm?", "A step-by-step set of instructions", ["A kind of computer","A brand of screen","A type of cable"], "A recipe is an algorithm: do this, then this, then this."),
+    mc("What does a variable do?", "Holds a value that can change", ["Fixes bugs","Draws shapes","Connects to wifi"], "Think of it as a labelled box you can put different things in."),
+    mc("Which of these is a programming language?", "Python", ["Pythagoras","Pixel","Parcel"], "Python is named after Monty Python, not the snake.")
+  ]
+}
+];
+
+
+(function(){
+  "use strict";
+
+  /* Share links point at wherever this copy is actually being played. Inside
+     the Claude artifact viewer the page is framed and cannot see its own
+     claude.ai address, so that one is baked in as the fallback; served from
+     GitHub Pages (or anywhere else top-level) it uses its real URL. */
+  var ARTIFACT_URL = "https://claude.ai/artifact/YPSPsrMRMgYPWsM5LWzQVA";
+  var PAGE_URL = (function(){
+    try {
+      if (window.parent !== window) return ARTIFACT_URL;
+      if (!/^https?:$/.test(location.protocol)) return ARTIFACT_URL;
+      return location.href.split("#")[0].split("?")[0];
+    } catch(e){ return ARTIFACT_URL; }
+  })();
+  var MAX_LINK = 7000;
+
+  var SUBJECTS = [
+    ["Maths","--grape"], ["Science","--teal"], ["Geography","--sky"], ["History","--marigold"],
+    ["English","--coral"], ["Languages","--orange"], ["Computing","--lime"], ["General","--magenta"]
+  ];
+  function subjectColor(s){
+    for (var i = 0; i < SUBJECTS.length; i++) if (SUBJECTS[i][0] === s) return "var(" + SUBJECTS[i][1] + ")";
+    return "var(--magenta)";
+  }
+  function initials(title){
+    var words = String(title || "?").trim().split(/\s+/).filter(function(w){ return /[A-Za-z0-9]/.test(w); });
+    if (!words.length) return "?";
+    if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+    return (words[0][0] + words[1][0]).toUpperCase();
+  }
+  function paintCover(node, kit){
+    node.textContent = initials(kit.title);
+    node.style.background = subjectColor(kit.subject);
+  }
+
+  /* ---------------- helpers ---------------- */
+  var $ = function(id){ return document.getElementById(id); };
+  var money = function(n){ return "$" + Math.round(n).toLocaleString("en-US"); };
+  var num = function(n){ return Math.round(n).toLocaleString("en-US"); };
+  var clamp = function(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); };
+  function shuffle(a){
+    var r = a.slice();
+    for (var i = r.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = r[i]; r[i] = r[j]; r[j] = t;
+    }
+    return r;
+  }
+  function el(tag, cls, text){
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function store(key, val){
+    try {
+      if (val === undefined){ var v = localStorage.getItem(key); return v ? JSON.parse(v) : null; }
+      localStorage.setItem(key, JSON.stringify(val));
+    } catch(e){}
+    return null;
+  }
+  var SHAPES = ['M12 2 L22 20 L2 20 Z','M12 1 L23 12 L12 23 L1 12 Z',
+    'M12 12 m-10 0 a10 10 0 1 0 20 0 a10 10 0 1 0 -20 0','M3 3 H21 V21 H3 Z'];
+  function shapeSVG(i){ return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + SHAPES[i % 4] + '" fill="currentColor"/></svg>'; }
+  function bar(pct){
+    var t = el("div", "track"), f = el("i");
+    f.style.width = clamp(pct, 0, 100) + "%";
+    t.appendChild(f);
+    return t;
+  }
+  function stat(cls, value, label){
+    var d = el("div", "stat " + (cls || ""));
+    d.appendChild(el("b", null, value));
+    d.appendChild(el("span", null, label));
+    return d;
+  }
+  function tidy(s){ return String(s || "").toLowerCase().replace(/\s+/g, " ").replace(/[.,!?;:'"]/g, "").trim(); }
+
+  /* ================= hoots =================
+     The roster: original owls drawn from parts, so a character costs a few
+     hundred bytes instead of an image. Three come free; the other ten are
+     earned, one per mode, which is the only progression in the game. */
+  var INK = "#231029", WHITE = "#FBF2E2";
+  var ACC = {
+    none:  function(){ return ""; },
+    cap:   function(h){ return '<path d="M22 33 A28 28 0 0 1 78 33 Z" fill="' + h.acc2 + '"/>'
+             + '<rect x="17" y="30" width="66" height="7.5" rx="3.75" fill="' + h.acc2 + '"/>'; },
+    bowtie:function(h){ return '<path d="M50 83 L37 76 L37 90 Z" fill="' + h.acc2 + '"/>'
+             + '<path d="M50 83 L63 76 L63 90 Z" fill="' + h.acc2 + '"/>'
+             + '<circle cx="50" cy="83" r="4" fill="' + h.acc2 + '"/>'; },
+    glasses:function(h){ return '<g fill="none" stroke="' + h.acc2 + '" stroke-width="3.2">'
+             + '<circle cx="39" cy="48" r="13.5"/><circle cx="61" cy="48" r="13.5"/>'
+             + '<path d="M52.5 48 H47.5"/><path d="M25.5 45 L18 41"/><path d="M74.5 45 L82 41"/></g>'; },
+    scarf: function(h){ return '<path d="M27 78 q23 11 46 0 v10 q-23 11 -46 0 z" fill="' + h.acc2 + '"/>'; },
+    phones:function(h){ return '<path d="M19 45 A31 31 0 0 1 81 45" fill="none" stroke="' + h.acc2 + '" stroke-width="5.5"/>'
+             + '<rect x="12" y="40" width="14" height="22" rx="7" fill="' + h.acc2 + '"/>'
+             + '<rect x="74" y="40" width="14" height="22" rx="7" fill="' + h.acc2 + '"/>'; },
+    crown: function(h){ return '<path d="M29 27 L35 11 L42.5 21 L50 6 L57.5 21 L65 11 L71 27 Z" fill="' + h.acc2 + '"/>'; },
+    leaf:  function(h){ return '<ellipse cx="22" cy="11" rx="10" ry="5" fill="' + h.acc2 + '" transform="rotate(-38 22 11)"/>'
+             + '<path d="M26 16 L20 8" stroke="' + h.acc2 + '" stroke-width="2.2" stroke-linecap="round"/>'; },
+    tophat:function(h){ return '<rect x="31" y="2" width="38" height="23" rx="3" fill="' + h.acc2 + '"/>'
+             + '<rect x="19" y="23" width="62" height="6.5" rx="3.25" fill="' + h.acc2 + '"/>'; },
+    band:  function(h){ return '<path d="M21 31 q29 13 58 0 v10 q-29 13 -58 0 z" fill="' + h.acc2 + '"/>'; },
+    halo:  function(h){ return '<ellipse cx="50" cy="7" rx="18" ry="5.5" fill="none" stroke="' + h.acc2 + '" stroke-width="4"/>'; },
+    ant:   function(h){ return '<path d="M50 22 V8" stroke="' + h.acc2 + '" stroke-width="3.5" stroke-linecap="round"/>'
+             + '<circle cx="50" cy="5" r="5" fill="' + h.acc2 + '"/>'; },
+    bolt:  function(h){ return '<path d="M54 58 L44 74 L50 74 L46 88 L58 70 L52 70 Z" fill="' + h.acc2 + '"/>'; },
+    coin:  function(h){ return '<circle cx="71" cy="72" r="10" fill="' + h.acc2 + '"/>'
+             + '<circle cx="71" cy="72" r="5" fill="none" stroke="#B87C00" stroke-width="2.2"/>'; }
+  };
+  function eyesFor(h){
+    if (h.eyes === "sleepy"){
+      return '<circle cx="39" cy="49" r="10.5" fill="' + WHITE + '"/><circle cx="61" cy="49" r="10.5" fill="' + WHITE + '"/>'
+        + '<circle cx="39" cy="52" r="4.5" fill="' + INK + '"/><circle cx="61" cy="52" r="4.5" fill="' + INK + '"/>'
+        + '<path d="M28.5 49 a10.5 10.5 0 0 1 21 0 z" fill="' + h.body + '"/>'
+        + '<path d="M50.5 49 a10.5 10.5 0 0 1 21 0 z" fill="' + h.body + '"/>';
+    }
+    if (h.eyes === "wide"){
+      return '<circle cx="38" cy="48" r="12.5" fill="' + WHITE + '"/><circle cx="62" cy="48" r="12.5" fill="' + WHITE + '"/>'
+        + '<circle cx="38" cy="48" r="4" fill="' + INK + '"/><circle cx="62" cy="48" r="4" fill="' + INK + '"/>';
+    }
+    if (h.eyes === "squint"){
+      return '<ellipse cx="39" cy="49" rx="10.5" ry="5.5" fill="' + WHITE + '"/>'
+        + '<ellipse cx="61" cy="49" rx="10.5" ry="5.5" fill="' + WHITE + '"/>'
+        + '<circle cx="39" cy="49" r="3.6" fill="' + INK + '"/><circle cx="61" cy="49" r="3.6" fill="' + INK + '"/>';
+    }
+    return '<circle cx="39" cy="48" r="11" fill="' + WHITE + '"/><circle cx="61" cy="48" r="11" fill="' + WHITE + '"/>'
+      + '<circle cx="39" cy="48" r="5" fill="' + INK + '"/><circle cx="61" cy="48" r="5" fill="' + INK + '"/>';
+  }
+  function hootSVG(h){
+    /* xmlns matters: the same markup is also loaded as an <img> in the arena */
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="' + h.name + '">'
+      + '<g stroke="' + h.beak + '" stroke-width="3.5" stroke-linecap="round" fill="none">'
+      +   '<path d="M37 84 v9 M32 93 h10"/><path d="M63 84 v9 M58 93 h10"/></g>'
+      + '<path d="M26 34 L20 10 L44 26 Z" fill="' + h.body + '"/>'
+      + '<path d="M74 34 L80 10 L56 26 Z" fill="' + h.body + '"/>'
+      + '<ellipse cx="50" cy="58" rx="31" ry="33" fill="' + h.body + '"/>'
+      + '<ellipse cx="50" cy="66" rx="19" ry="22" fill="' + h.belly + '"/>'
+      + eyesFor(h)
+      + '<path d="M44 56 H56 L50 64 Z" fill="' + h.beak + '"/>'
+      + (ACC[h.acc] || ACC.none)(h)
+      + '</svg>';
+  }
+
+  var HOOTS = [
+    { id:"pip",   name:"Pip",     body:"#23D2B5", belly:"#FBF2E2", beak:"#FFB627", eyes:"round",  acc:"none" },
+    { id:"nib",   name:"Nib",     body:"#FF4D5E", belly:"#FBF2E2", beak:"#FFB627", eyes:"wide",   acc:"bowtie",  acc2:"#231029" },
+    { id:"moss",  name:"Moss",    body:"#A8E05F", belly:"#FBF2E2", beak:"#FF9A52", eyes:"round",  acc:"leaf",    acc2:"#23D2B5" },
+    { id:"sol",   name:"Sol",     body:"#FFB627", belly:"#FBF2E2", beak:"#FF9A52", eyes:"squint", acc:"glasses", acc2:"#231029",
+      need:function(s){ return s.blitz >= 8000; }, how:"Score 8,000 in Blitz" },
+    { id:"vault", name:"Vault",   body:"#9B6BFF", belly:"#E8D2B0", beak:"#FFB627", eyes:"round",  acc:"tophat",  acc2:"#231029",
+      need:function(s){ return s.tycoon >= 100000; }, how:"Bank $100,000 in Tycoon" },
+    { id:"ember", name:"Ember",   body:"#FF9A52", belly:"#FBF2E2", beak:"#FF4D5E", eyes:"squint", acc:"band",    acc2:"#FF4D5E",
+      need:function(s){ return s.survival >= 15; }, how:"Survive 15 questions" },
+    { id:"wisp",  name:"Wisp",    body:"#E8D2B0", belly:"#FBF2E2", beak:"#FFB627", eyes:"sleepy", acc:"halo",    acc2:"#FBF2E2",
+      need:function(s){ return s.sudden >= 12; }, how:"Get 12 in a row in Sudden Death" },
+    { id:"knox",  name:"Knox",    body:"#D94FA8", belly:"#FBF2E2", beak:"#FFB627", eyes:"wide",   acc:"crown",   acc2:"#FFB627",
+      need:function(s){ return s.boss; }, how:"Beat all three examiners" },
+    { id:"summit",name:"Summit",  body:"#5BC0EB", belly:"#FBF2E2", beak:"#FF9A52", eyes:"round",  acc:"cap",     acc2:"#FF4D5E",
+      need:function(s){ return s.climb >= 15; }, how:"Reach rung 15 in Climb" },
+    { id:"blip",  name:"Blip",    body:"#A8E05F", belly:"#5BC0EB", beak:"#FFB627", eyes:"wide",   acc:"ant",     acc2:"#FF4D5E",
+      need:function(s){ return s.snap >= 25; }, how:"Call 25 right in Snap" },
+    { id:"prof",  name:"Prof",    body:"#FBF2E2", belly:"#E8D2B0", beak:"#FF9A52", eyes:"sleepy", acc:"glasses", acc2:"#9B6BFF",
+      need:function(s){ return s.study; }, how:"Master a whole kit in Study" },
+    { id:"echo",  name:"Echo",    body:"#9B6BFF", belly:"#FBF2E2", beak:"#23D2B5", eyes:"round",  acc:"phones",  acc2:"#23D2B5",
+      need:function(s){ return s.relay; }, how:"Finish a Pass & Play round" },
+    { id:"dusk",  name:"Dusk",    body:"#6B5BA8", belly:"#B49BC8", beak:"#FFB627", eyes:"squint", acc:"band",    acc2:"#231029",
+      need:function(s){ return s.chase >= 20; }, how:"Answer 20 while being chased" },
+    { id:"bolt",  name:"Bolt",    body:"#5BD6C0", belly:"#FBF2E2", beak:"#FF9A52", eyes:"wide",   acc:"bolt",    acc2:"#FFB627",
+      need:function(s){ return s.circuit > 0 && s.circuit <= 100; }, how:"Run a circuit in under 100 seconds" },
+    { id:"magpie",name:"Magpie",  body:"#2A1236", belly:"#FBF2E2", beak:"#FFB627", eyes:"wide",   acc:"coin",    acc2:"#FFB627",
+      need:function(s){ return s.hoard >= 600; }, how:"Hoard $600 in ninety seconds" },
+    { id:"rover", name:"Rover",   body:"#FF6B9D", belly:"#FBF2E2", beak:"#FFB627", eyes:"round",  acc:"scarf",   acc2:"#5BC0EB",
+      need:function(s){ return s.roam >= 10000; }, how:"Bank $10,000 on foot in Roam" },
+    { id:"noct",  name:"Nocturne",body:"#3B2450", belly:"#4A2C63", beak:"#D94FA8", eyes:"wide",   acc:"scarf",   acc2:"#D94FA8",
+      need:function(s){ return s.answered >= 500; }, how:"Answer 500 questions all told" }
+  ];
+
+  var STATS_BLANK = { roam:0, chase:0, circuit:0, hoard:0, blitz:0, tycoon:0, survival:0, sudden:0, climb:0, snap:0, boss:false, study:false, relay:false, answered:0 };
+  var stats = Object.assign({}, STATS_BLANK, store("gimhoot.stats") || {});
+  function saveStats(){ store("gimhoot.stats", stats); }
+  function isUnlocked(h){ return !h.need || !!h.need(stats); }
+  function unlockedIds(){ return HOOTS.filter(isUnlocked).map(function(h){ return h.id; }); }
+  function hootById(id){
+    for (var i = 0; i < HOOTS.length; i++) if (HOOTS[i].id === id) return HOOTS[i];
+    return HOOTS[0];
+  }
+  var myHoot = hootById(store("gimhoot.hoot") || "pip");
+  if (!isUnlocked(myHoot)) myHoot = HOOTS[0];
+  function setHoot(h){
+    myHoot = h;
+    store("gimhoot.hoot", h.id);
+    paintHootSlot();
+    renderHootGrid();
+  }
+  function paintHootSlot(){
+    $("hoot-art").innerHTML = hootSVG(myHoot);
+    var n = $("hoot-name");
+    n.textContent = myHoot.name;
+    n.appendChild(el("small", null, "Your hoot · change"));
+  }
+  function renderHootGrid(){
+    var grid = $("hootgrid");
+    grid.textContent = "";
+    var have = unlockedIds().length;
+    $("hoot-meta").textContent = have + " of " + HOOTS.length + " earned · the rest come from the modes";
+    HOOTS.forEach(function(h){
+      var ok = isUnlocked(h);
+      var b = el("button", "hoot" + (ok ? "" : " locked") + (h.id === myHoot.id ? " on" : ""));
+      var art = el("span", "art");
+      art.innerHTML = hootSVG(h);
+      b.appendChild(art);
+      b.appendChild(el("b", null, ok ? h.name : "???"));
+      b.appendChild(el("small", null, ok ? (h.need ? "Earned" : "Yours from the start") : h.how));
+      b.disabled = !ok;
+      if (ok) b.onclick = function(){ setHoot(h); };
+      grid.appendChild(b);
+    });
+  }
+  /* returns the hoots unlocked by this run, and banks the new numbers */
+  function bankStats(id, r){
+    var before = unlockedIds();
+    stats.answered += r.correct + r.wrong;
+    if (id === "roam")     stats.roam     = Math.max(stats.roam || 0, r.cash || 0);
+    if (id === "chase")    stats.chase    = Math.max(stats.chase || 0, r.correct || 0);
+    if (id === "hoard")    stats.hoard    = Math.max(stats.hoard || 0, r.cash || 0);
+    if (id === "circuit" && r.leg >= r.legs){
+      var t = Math.round(r.elapsed * 10) / 10;
+      stats.circuit = stats.circuit ? Math.min(stats.circuit, t) : t;
+    }
+    if (id === "blitz")    stats.blitz    = Math.max(stats.blitz, r.score || 0);
+    if (id === "tycoon")   stats.tycoon   = Math.max(stats.tycoon, r.cash || 0);
+    if (id === "survival") stats.survival = Math.max(stats.survival, r.correct || 0);
+    if (id === "sudden")   stats.sudden   = Math.max(stats.sudden, r.best || 0);
+    if (id === "climb")    stats.climb    = Math.max(stats.climb, r.peak || 0);
+    if (id === "snap")     stats.snap     = Math.max(stats.snap, r.score || 0);
+    if (id === "boss" && r.beaten >= 3) stats.boss = true;
+    if (id === "study" && r.queue && r.queue.length === 0) stats.study = true;
+    if (id === "relay")    stats.relay    = true;
+    saveStats();
+    var after = unlockedIds();
+    return after.filter(function(x){ return before.indexOf(x) < 0; }).map(hootById);
+  }
+
+  /* ---------------- validation ----------------
+     Everything that reaches a kit — Claude's JSON, a pasted code, a link from
+     a stranger — goes through here first. */
+  function normQ(raw){
+    if (!raw || typeof raw.q !== "string") return null;
+    var text = raw.q.trim().slice(0, 300);
+    if (!text) return null;
+    var why = typeof raw.why === "string" ? raw.why.trim().slice(0, 400) : "";
+
+    var wantsText = raw.type === "text" || (!raw.options && Array.isArray(raw.accept));
+    if (wantsText){
+      var acc = (Array.isArray(raw.accept) ? raw.accept : [])
+        .filter(function(s){ return typeof s === "string" && s.trim(); })
+        .map(function(s){ return s.trim().slice(0, 120); })
+        .slice(0, 8);
+      if (!acc.length) return null;
+      return { q:text, type:"text", accept:acc, why:why };
+    }
+
+    var opts = [];
+    if (Array.isArray(raw.options) && raw.options.length){
+      if (typeof raw.options[0] === "object"){
+        opts = raw.options
+          .filter(function(o){ return o && typeof o.t === "string" && o.t.trim(); })
+          .map(function(o){ return { t:o.t.trim().slice(0, 120), c:!!o.c }; })
+          .slice(0, 4);
+      } else {
+        var ai = Number(raw.answer);
+        opts = raw.options
+          .filter(function(s){ return typeof s === "string" && s.trim(); })
+          .map(function(s){ return s.trim().slice(0, 120); })
+          .slice(0, 4)
+          .map(function(t, i){ return { t:t, c:i === ai }; });
+      }
+    }
+    if (opts.length < 2) return null;
+    var rights = opts.filter(function(o){ return o.c; }).length;
+    if (!rights || rights === opts.length) return null;
+    return { q:text, type:"mc", options:opts, why:why };
+  }
+
+  function normKit(raw, fallbackTitle){
+    var qs = [];
+    var list = (raw && Array.isArray(raw.questions)) ? raw.questions : (Array.isArray(raw) ? raw : []);
+    for (var i = 0; i < list.length && qs.length < 60; i++){
+      var q = normQ(list[i]);
+      if (q) qs.push(q);
+    }
+    var subj = (raw && typeof raw.subject === "string") ? raw.subject.slice(0, 30) : "";
+    var known = SUBJECTS.some(function(s){ return s[0] === subj; });
+    return {
+      title:((raw && typeof raw.title === "string" && raw.title.trim().slice(0, 70)) || fallbackTitle),
+      subject:known ? subj : "General",
+      language:(raw && typeof raw.language === "string" && raw.language.slice(0, 20)) || "English",
+      questions:qs
+    };
+  }
+
+  /* ---------------- state ---------------- */
+  var state = { kit:normKit(CATALOG[3], "The Solar System"), tab:"play" };
+  var run = null;
+
+  function saveKit(){ store("gimhoot.kit", state.kit); markSaved(); }
+  function markSaved(){
+    var n = $("q-saved");
+    n.textContent = "All changes saved";
+    clearTimeout(markSaved.t);
+    markSaved.t = setTimeout(function(){ n.textContent = ""; }, 2400);
+  }
+  (function(){
+    var s = store("gimhoot.kit");
+    if (s && Array.isArray(s.questions) && s.questions.length) state.kit = normKit(s, "Your kit");
+  })();
+
+  /* ---------------- tabs ---------------- */
+  function setTab(t){
+    state.tab = t;
+    $("t-play").hidden = t !== "play";
+    $("t-make").hidden = t !== "make";
+    $("t-find").hidden = t !== "find";
+    $("tab-play").classList.toggle("on", t === "play");
+    $("tab-make").classList.toggle("on", t === "make");
+    $("tab-find").classList.toggle("on", t === "find");
+    if (t === "make") renderEditor();
+    if (t === "find") renderKits();
+    if (t === "play") renderNowPlaying();
+  }
+  $("tab-play").onclick = function(){ setTab("play"); };
+  $("tab-make").onclick = function(){ setTab("make"); };
+  $("tab-find").onclick = function(){ setTab("find"); };
+  $("np-edit").onclick = function(){ setTab("make"); };
+  $("np-swap").onclick = function(){ setTab("find"); };
+
+  function renderNowPlaying(){
+    paintCover($("np-cover"), state.kit);
+    $("np-title").textContent = state.kit.title;
+    var mcN = state.kit.questions.filter(function(q){ return q.type === "mc"; }).length;
+    var txN = state.kit.questions.length - mcN;
+    $("np-meta").textContent = state.kit.questions.length + " questions · " + state.kit.subject
+      + " · " + state.kit.language
+      + (txN ? " · " + mcN + " multiple choice, " + txN + " text input" : "");
+    paintHootSlot();
+    document.querySelectorAll(".mode").forEach(function(c){ refreshModeCard(c); });
+  }
+  $("hootslot").onclick = function(){
+    var p = $("hootpanel");
+    p.hidden = !p.hidden;
+    if (!p.hidden){ renderHootGrid(); p.scrollIntoView({ behavior:"smooth", block:"nearest" }); }
+  };
+  $("hoot-close").onclick = function(){ $("hootpanel").hidden = true; };
+
+  /* ---------------- kit editor ---------------- */
+  var sel = {};
+  var editing = -1;
+
+  function renderEditor(){
+    $("k-title").value = state.kit.title;
+    var sub = $("k-subject");
+    if (!sub.options.length){
+      SUBJECTS.forEach(function(s){
+        var o = el("option", null, s[0]);
+        o.value = s[0];
+        sub.appendChild(o);
+      });
+    }
+    sub.value = state.kit.subject;
+    $("k-language").value = state.kit.language;
+    paintCover($("k-cover"), state.kit);
+
+    var list = $("qlist");
+    list.textContent = "";
+    $("q-empty").hidden = state.kit.questions.length > 0;
+    $("q-count").textContent = state.kit.questions.length + " in this kit";
+
+    state.kit.questions.forEach(function(q, i){
+      var li = el("li", "qrow" + (sel[i] ? " sel" : ""));
+      var box = document.createElement("input");
+      box.type = "checkbox";
+      box.checked = !!sel[i];
+      box.setAttribute("aria-label", "Select question " + (i + 1));
+      box.onchange = function(){
+        if (box.checked) sel[i] = true; else delete sel[i];
+        renderEditor();
+      };
+      li.appendChild(box);
+
+      var main = el("div", "qmain");
+      var top = el("div", "qtop");
+      top.appendChild(el("span", "qnum", String(i + 1)));
+      top.appendChild(el("span", "qkind" + (q.type === "text" ? " text" : ""),
+        q.type === "text" ? "Text input" : "Multiple choice"));
+      main.appendChild(top);
+      main.appendChild(el("p", "qtext", q.q));
+
+      var ans = el("div", "qans");
+      if (q.type === "text"){
+        q.accept.forEach(function(a){ ans.appendChild(el("span", "anschip right", a)); });
+      } else {
+        q.options.forEach(function(o){ ans.appendChild(el("span", "anschip" + (o.c ? " right" : ""), o.t)); });
+      }
+      main.appendChild(ans);
+      li.appendChild(main);
+
+      var tools = el("div", "qtools");
+      [["Edit", function(){ openEditor(i); }],
+       ["Copy", function(){ dupQuestion(i); }],
+       ["↑", function(){ moveQuestion(i, -1); }],
+       ["↓", function(){ moveQuestion(i, 1); }],
+       ["Delete", function(){ delQuestions([i]); }]
+      ].forEach(function(pair){
+        var b = el("button", null, pair[0]);
+        b.onclick = pair[1];
+        tools.appendChild(b);
+      });
+      li.appendChild(tools);
+      list.appendChild(li);
+    });
+
+    var n = Object.keys(sel).length;
+    $("bulkbar").hidden = n === 0;
+    $("bulk-count").textContent = n + (n === 1 ? " question selected" : " questions selected");
+  }
+
+  function dupQuestion(i){
+    state.kit.questions.splice(i + 1, 0, JSON.parse(JSON.stringify(state.kit.questions[i])));
+    sel = {}; saveKit(); renderEditor();
+  }
+  function moveQuestion(i, d){
+    var j = i + d;
+    if (j < 0 || j >= state.kit.questions.length) return;
+    var q = state.kit.questions.splice(i, 1)[0];
+    state.kit.questions.splice(j, 0, q);
+    sel = {}; saveKit(); renderEditor();
+  }
+  function delQuestions(idx){
+    idx.slice().sort(function(a, b){ return b - a; }).forEach(function(i){ state.kit.questions.splice(i, 1); });
+    sel = {}; saveKit(); renderEditor(); renderNowPlaying();
+  }
+
+  $("k-title").oninput = function(){ state.kit.title = this.value.slice(0, 70) || "Untitled kit"; paintCover($("k-cover"), state.kit); saveKit(); };
+  $("k-subject").onchange = function(){ state.kit.subject = this.value; paintCover($("k-cover"), state.kit); saveKit(); };
+  $("k-language").onchange = function(){ state.kit.language = this.value; saveKit(); };
+  $("kit-new").onclick = function(){
+    state.kit = { title:"Untitled kit", subject:"General", language:"English", questions:[] };
+    sel = {}; closeEditor(); saveKit(); renderEditor(); renderNowPlaying();
+  };
+
+  $("q-all").onclick = function(){
+    var all = Object.keys(sel).length === state.kit.questions.length;
+    sel = {};
+    if (!all) state.kit.questions.forEach(function(_, i){ sel[i] = true; });
+    renderEditor();
+  };
+  $("bulk-none").onclick = function(){ sel = {}; renderEditor(); };
+  $("bulk-del").onclick = function(){ delQuestions(Object.keys(sel).map(Number)); };
+  $("bulk-text").onclick = function(){
+    Object.keys(sel).map(Number).forEach(function(i){
+      var q = state.kit.questions[i];
+      if (q.type !== "mc") return;
+      state.kit.questions[i] = {
+        q:q.q, type:"text", why:q.why,
+        accept:q.options.filter(function(o){ return o.c; }).map(function(o){ return o.t; })
+      };
+    });
+    sel = {}; saveKit(); renderEditor(); renderNowPlaying();
+  };
+
+  /* --- the one-question editor --- */
+  function ansRow(text, correct){
+    var row = el("div", "ansrow");
+    var tick = el("button", "tick" + (correct ? " on" : ""), correct ? "✓" : "✕");
+    tick.type = "button";
+    tick.title = "Mark this answer correct or incorrect";
+    tick.onclick = function(){
+      var on = tick.classList.toggle("on");
+      tick.textContent = on ? "✓" : "✕";
+    };
+    var inp = document.createElement("input");
+    inp.type = "text";
+    inp.value = text || "";
+    inp.maxLength = 120;
+    inp.placeholder = "An answer";
+    row.appendChild(tick);
+    row.appendChild(inp);
+    return row;
+  }
+  function openEditor(i){
+    editing = i;
+    var q = i >= 0 ? state.kit.questions[i] : null;
+    $("e-head").textContent = q ? "Edit question " + (i + 1) : "Add a question";
+    $("e-q").value = q ? q.q : "";
+    $("e-why").value = q ? q.why : "";
+    $("e-type").value = q ? q.type : "mc";
+    $("e-accept").value = (q && q.type === "text") ? q.accept.join("\n") : "";
+    var rows = $("e-rows");
+    rows.textContent = "";
+    var opts = (q && q.type === "mc") ? q.options : [{ t:"", c:true }, { t:"", c:false }, { t:"", c:false }, { t:"", c:false }];
+    for (var k = 0; k < 4; k++){
+      rows.appendChild(ansRow(opts[k] ? opts[k].t : "", opts[k] ? opts[k].c : false));
+    }
+    syncType();
+    $("e-status").hidden = true;
+    $("qeditor").hidden = false;
+    $("qeditor").scrollIntoView({ behavior:"smooth", block:"center" });
+    $("e-q").focus();
+  }
+  function closeEditor(){ $("qeditor").hidden = true; editing = -1; }
+  function syncType(){
+    var t = $("e-type").value;
+    $("e-mc").hidden = t !== "mc";
+    $("e-text").hidden = t !== "text";
+  }
+  $("e-type").onchange = syncType;
+  $("q-add").onclick = function(){ openEditor(-1); };
+  $("e-cancel").onclick = closeEditor;
+  $("e-save").onclick = function(){
+    var st = $("e-status");
+    function bad(msg){ st.hidden = false; st.className = "status err"; st.textContent = msg; }
+    var raw = { q:$("e-q").value, why:$("e-why").value, type:$("e-type").value };
+    if (raw.type === "text"){
+      raw.accept = $("e-accept").value.split("\n");
+    } else {
+      raw.options = Array.prototype.map.call($("e-rows").children, function(row){
+        return { t:row.querySelector("input").value, c:row.querySelector(".tick").classList.contains("on") };
+      }).filter(function(o){ return o.t.trim(); });
+    }
+    var q = normQ(raw);
+    if (!q){
+      if (!String(raw.q).trim()) return bad("The question can't be blank.");
+      if (raw.type === "text") return bad("Give at least one accepted answer.");
+      var filled = (raw.options || []).length;
+      if (filled < 2) return bad("A multiple-choice question needs at least two answers.");
+      var right = (raw.options || []).filter(function(o){ return o.c; }).length;
+      if (!right) return bad("Tick at least one answer as correct.");
+      if (right === filled) return bad("At least one answer has to be wrong, or there's nothing to choose.");
+      return bad("That question didn't save. Check the answers.");
+    }
+    if (editing >= 0) state.kit.questions[editing] = q;
+    else state.kit.questions.push(q);
+    closeEditor(); saveKit(); renderEditor(); renderNowPlaying();
+  };
+
+  /* ---------------- bulk paste ----------------
+     Fills a kit fast without an account, a key or a network round trip.
+     Every parsed line still goes through normQ(), so a malformed one is
+     skipped and named rather than half-added. */
+  function parseBulk(text){
+    var out = [], bad = [];
+    String(text || "").split(/\r?\n/).forEach(function(raw, n){
+      var line = raw.trim();
+      if (!line) return;
+
+      var why = "", cut = line.indexOf("//");
+      if (cut >= 0){ why = line.slice(cut + 2).trim(); line = line.slice(0, cut).trim(); }
+      if (!line) return;
+
+      /* a spreadsheet paste arrives tab-separated */
+      if (line.indexOf("\t") >= 0 && line.indexOf("|") < 0) line = line.split("\t").join("|");
+
+      if (line.indexOf("|") < 0 && line.indexOf(">") >= 0){
+        var at = line.indexOf(">");
+        var accept = line.slice(at + 1).split(",").map(function(t){ return t.trim(); }).filter(Boolean);
+        var t = normQ({ q:line.slice(0, at).trim(), type:"text", accept:accept, why:why });
+        if (t) out.push(t); else bad.push(n + 1);
+        return;
+      }
+
+      var parts = line.split("|").map(function(t){ return t.trim(); }).filter(Boolean);
+      if (parts.length < 3){ bad.push(n + 1); return; }
+      var q = parts.shift();
+      var starred = parts.some(function(t){ return t.charAt(0) === "*"; });
+      var options = parts.map(function(t, i){
+        var right = t.charAt(0) === "*";
+        return { t:right ? t.slice(1).trim() : t, c:starred ? right : i === 0 };
+      });
+      var m = normQ({ q:q, type:"mc", options:options, why:why });
+      if (m) out.push(m); else bad.push(n + 1);
+    });
+    return { questions:out, bad:bad };
+  }
+
+  $("bulk-add").onclick = function(){
+    var st = $("bulkstatus"), res = parseBulk($("bulk-in").value);
+    st.hidden = false;
+    if (!res.questions.length){
+      st.className = "status err";
+      st.textContent = res.bad.length
+        ? ("Nothing usable \u2014 check line " + res.bad.slice(0, 4).join(", ") + ".")
+        : "Paste some lines first.";
+      return;
+    }
+    var room = 60 - state.kit.questions.length;
+    var taking = res.questions.slice(0, Math.max(0, room));
+    state.kit.questions = state.kit.questions.concat(taking);
+    sel = {};
+    saveKit(); renderEditor(); renderNowPlaying();
+    st.className = res.bad.length ? "status err" : "status";
+    st.textContent = "Added " + taking.length + (taking.length === 1 ? " question." : " questions.")
+      + (taking.length < res.questions.length ? " The kit is full at 60." : "")
+      + (res.bad.length ? (" Skipped line " + res.bad.slice(0, 4).join(", ")
+          + (res.bad.length > 4 ? " and others" : "")
+          + " \u2014 each line needs a question and at least two answers.") : "");
+    if (!res.bad.length) $("bulk-in").value = "";
+  };
+  $("bulk-clear").onclick = function(){
+    $("bulk-in").value = "";
+    $("bulkstatus").hidden = true;
+  };
+
+  /* ---------------- shelf, codes, discover ---------------- */
+  var LIB = { shelf:[], subject:"", src:"all", q:"" };
+
+  function loadShelf(){
+    var s = store("gimhoot.shelf");
+    LIB.shelf = Array.isArray(s) ? s : [];
+  }
+  function saveShelf(){ store("gimhoot.shelf", LIB.shelf.slice(0, 120)); }
+  function allKits(){
+    return CATALOG.map(function(k){ return { kit:normKit(k, k.title), meta:k, source:"catalog" }; })
+      .concat(LIB.shelf.map(function(s){ return { kit:normKit(s, s.title), meta:s, source:"shared" }; }));
+  }
+
+  function b64url(bytes){
+    var s = "";
+    for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  function unb64url(str){
+    var s = str.replace(/-/g, "+").replace(/_/g, "/");
+    while (s.length % 4) s += "=";
+    var bin = atob(s), out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+  function packKit(kit){
+    return {
+      t:kit.title, s:kit.subject, g:kit.language,
+      q:kit.questions.map(function(q){
+        return q.type === "text"
+          ? ["t", q.q, q.accept, q.why || ""]
+          : ["m", q.q, q.options.map(function(o){ return [o.t, o.c ? 1 : 0]; }), q.why || ""];
+      })
+    };
+  }
+  function unpackKit(o){
+    var qs = ((o && o.q) || []).map(function(a){
+      if (!Array.isArray(a)) return null;
+      if (a[0] === "t") return { q:a[1], type:"text", accept:a[2], why:a[3] };
+      if (a[0] === "m") return {
+        q:a[1], type:"mc", why:a[3],
+        options:(Array.isArray(a[2]) ? a[2] : []).map(function(p){ return { t:p && p[0], c:!!(p && p[1]) }; })
+      };
+      /* the first share format: [question, options[], answerIndex, why] */
+      return { q:a[0], options:a[1], answer:a[2], why:a[3] };
+    });
+    return normKit({ title:o && o.t, subject:o && o.s, language:o && o.g, questions:qs }, "Shared kit");
+  }
+  async function encode(payload, tag){
+    var bytes = new TextEncoder().encode(JSON.stringify(payload));
+    if (window.CompressionStream){
+      try {
+        var stream = new Blob([bytes]).stream().pipeThrough(new CompressionStream("deflate-raw"));
+        return tag + "2." + b64url(new Uint8Array(await new Response(stream).arrayBuffer()));
+      } catch(e){}
+    }
+    return tag + "1." + b64url(bytes);
+  }
+  async function decode(code){
+    var m = /^(GH|GB)([12])\.([A-Za-z0-9\-_]+)$/.exec(String(code || "").trim().replace(/^#/, ""));
+    if (!m) return null;
+    var bytes = unb64url(m[3]);
+    if (m[2] === "2"){
+      if (!window.DecompressionStream) throw new Error("no-decompress");
+      var stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+      bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+    }
+    return { kind:m[1], value:JSON.parse(new TextDecoder().decode(bytes)) };
+  }
+
+  function addToShelf(kit){
+    if (!kit || kit.questions.length < 1) return null;
+    var dupe = LIB.shelf.filter(function(s){
+      return s.title === kit.title && s.questions.length === kit.questions.length;
+    })[0];
+    if (dupe) return { kit:dupe, dupe:true };
+    var entry = {
+      id:"s" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+      title:kit.title, subject:kit.subject, language:kit.language,
+      questions:kit.questions, added:new Date().toISOString()
+    };
+    LIB.shelf.unshift(entry);
+    saveShelf();
+    return { kit:entry, dupe:false };
+  }
+
+  async function importCode(raw, statusEl){
+    function say(msg, bad){
+      if (!statusEl) return;
+      statusEl.hidden = false;
+      statusEl.className = "status" + (bad ? " err" : "");
+      statusEl.textContent = msg;
+    }
+    var text = String(raw || "").trim();
+    var at = text.lastIndexOf("#");
+    if (at >= 0) text = text.slice(at + 1);
+    if (!text){ say("Paste the link or code first.", true); return 0; }
+
+    var parsed;
+    try { parsed = await decode(text); }
+    catch(e){ say("That code didn't unpack. Ask them to send it again.", true); return 0; }
+    if (!parsed){ say("That doesn't look like a Gimhoot link or code.", true); return 0; }
+
+    var added = 0, skipped = 0;
+    var list = parsed.kind === "GB" ? (Array.isArray(parsed.value) ? parsed.value : []) : [parsed.value];
+    list.forEach(function(o){
+      var r = addToShelf(unpackKit(o));
+      if (!r) return;
+      if (r.dupe) skipped++; else added++;
+    });
+
+    renderKits();
+    if (!added && !skipped){ say("Nothing usable in that one.", true); return 0; }
+    say(added
+      ? (added + (added === 1 ? " kit added to your shelf" : " kits added to your shelf")
+         + (skipped ? ", " + skipped + " already there." : "."))
+      : "You already have " + (skipped === 1 ? "that kit." : "all of those."));
+    return added;
+  }
+
+  function libMsg(text){
+    var m = $("lib-msg");
+    if (!text){ m.hidden = true; return; }
+    m.hidden = false;
+    m.textContent = text;
+  }
+  function shortDate(iso){
+    var d = new Date(iso);
+    return isNaN(d) ? "recently" : d.toLocaleDateString(undefined, { day:"numeric", month:"short", year:"numeric" });
+  }
+
+  function renderSubjectChips(){
+    var box = $("subject-chips");
+    if (box.children.length) return;
+    var all = el("button", "chip on", "Every subject");
+    all.onclick = function(){
+      LIB.subject = "";
+      box.querySelectorAll(".chip").forEach(function(c){ c.classList.remove("on"); });
+      all.classList.add("on");
+      renderKits();
+    };
+    box.appendChild(all);
+    SUBJECTS.forEach(function(s){
+      var c = el("button", "chip", s[0]);
+      c.onclick = function(){
+        LIB.subject = s[0];
+        box.querySelectorAll(".chip").forEach(function(x){ x.classList.remove("on"); });
+        c.classList.add("on");
+        renderKits();
+      };
+      box.appendChild(c);
+    });
+  }
+
+  function renderKits(){
+    renderSubjectChips();
+    var wrap = $("kits"), q = LIB.q.toLowerCase();
+    var rows = allKits().filter(function(r){
+      if (LIB.src === "shared" && r.source !== "shared") return false;
+      if (LIB.src === "featured" && !r.meta.featured) return false;
+      if (LIB.subject && r.kit.subject !== LIB.subject) return false;
+      if (!q) return true;
+      return r.kit.title.toLowerCase().indexOf(q) >= 0 || r.kit.subject.toLowerCase().indexOf(q) >= 0;
+    });
+
+    if (!rows.length){
+      wrap.textContent = "";
+      libMsg(LIB.src === "shared" && !LIB.shelf.length
+        ? "Nobody has shared a kit with you yet. Make one in the Make tab and send the link on."
+        : "No kits match that.");
+      return;
+    }
+    libMsg(null);
+
+    wrap.textContent = "";
+    rows.forEach(function(r){
+      var kit = r.kit, shared = r.source === "shared";
+      var c = el("div", "kit" + (shared ? " shared" : ""));
+      var head = el("div", "khead");
+      var cov = el("div", "cover lg");
+      paintCover(cov, kit);
+      head.appendChild(cov);
+      var t = el("div");
+      t.appendChild(el("span", "tag", shared ? "Shared with you" : (r.meta.featured ? "Featured" : "In the catalogue")));
+      t.appendChild(el("h4", null, kit.title));
+      head.appendChild(t);
+      c.appendChild(head);
+
+      var txN = kit.questions.filter(function(x){ return x.type === "text"; }).length;
+      c.appendChild(el("p", "facts",
+        kit.questions.length + " questions · " + kit.subject + " · " + kit.language
+        + (txN ? " · " + txN + " typed" : "")
+        + (shared && r.meta.added ? " · " + shortDate(r.meta.added) : "")));
+
+      var acts = el("div", "acts");
+      var play = el("button", "btn btn-go btn-sm", "Load and play");
+      play.onclick = function(){
+        state.kit = kit;
+        sel = {}; saveKit(); renderNowPlaying(); setTab("play");
+      };
+      acts.appendChild(play);
+
+      var pass = el("button", "btn btn-ghost btn-sm", "Pass it on");
+      pass.onclick = function(){ shareKit(kit, pass); };
+      acts.appendChild(pass);
+
+      if (shared){
+        var del = el("button", "btn btn-ghost btn-sm", "Remove");
+        del.onclick = function(){
+          LIB.shelf = LIB.shelf.filter(function(s){ return s.id !== r.meta.id; });
+          saveShelf(); renderKits();
+        };
+        acts.appendChild(del);
+      }
+      c.appendChild(acts);
+      wrap.appendChild(c);
+    });
+  }
+
+  $("lib-search").oninput = function(){ LIB.q = this.value.trim(); renderKits(); };
+  [["src-all","all"],["src-featured","featured"],["src-shared","shared"]].forEach(function(p){
+    $(p[0]).onclick = function(){
+      LIB.src = p[1];
+      ["src-all","src-featured","src-shared"].forEach(function(id){ $(id).classList.remove("on"); });
+      $(p[0]).classList.add("on");
+      renderKits();
+    };
+  });
+
+  /* --- sharing --- */
+  async function copyText(text, btn){
+    try {
+      await navigator.clipboard.writeText(text);
+      var was = btn.textContent;
+      btn.textContent = "Copied";
+      setTimeout(function(){ btn.textContent = was; }, 1600);
+    } catch(e){
+      var ta = $("share-link");
+      ta.value = text; ta.focus(); ta.select();
+      var st = $("share-status");
+      st.hidden = false; st.className = "status";
+      st.textContent = "Copying is blocked here — it's selected above, copy it by hand.";
+    }
+  }
+  async function shareKit(kit, btn){
+    var was = btn ? btn.textContent : "";
+    if (btn){ btn.disabled = true; btn.textContent = "Packing…"; }
+    try {
+      var code = await encode(packKit(kit), "GH");
+      var link = PAGE_URL + "#" + code;
+      setTab("make");
+      $("share-form").hidden = false;
+      var st = $("share-status");
+      st.hidden = false; st.className = "status";
+      if (link.length > MAX_LINK){
+        $("share-link").value = code;
+        st.textContent = "That kit is too big to ride in a link — this is the code instead. They paste it under Discover.";
+      } else {
+        $("share-link").value = link;
+        st.textContent = "“" + kit.title + "” · " + kit.questions.length + " questions · " + link.length + " characters.";
+      }
+      $("share-link").dataset.code = code;
+      $("share-form").scrollIntoView({ behavior:"smooth", block:"center" });
+    } catch(e){
+      libMsg("Couldn't pack that kit into a link.");
+    } finally {
+      if (btn){ btn.disabled = false; btn.textContent = was; }
+    }
+  }
+  $("share-open").onclick = function(){
+    if (state.kit.questions.length < 1){
+      var st = $("share-status");
+      st.hidden = false; st.className = "status err";
+      st.textContent = "Add a question first.";
+      return;
+    }
+    shareKit(state.kit, $("share-open"));
+  };
+  $("share-close").onclick = function(){ $("share-form").hidden = true; $("share-status").hidden = true; };
+  $("share-copy").onclick = function(){ copyText($("share-link").value, this); };
+  $("share-code").onclick = function(){ copyText($("share-link").dataset.code || $("share-link").value, this); };
+
+  $("imp-go").onclick = function(){
+    importCode($("imp-code").value, $("imp-status")).then(function(n){ if (n) $("imp-code").value = ""; });
+  };
+  $("exp-all").onclick = async function(){
+    var btn = this, st = $("imp-status");
+    var kits = allKits().map(function(r){ return packKit(r.kit); });
+    btn.disabled = true;
+    try {
+      var code = await encode(kits, "GB");
+      st.hidden = false; st.className = "status";
+      try {
+        await navigator.clipboard.writeText(code);
+        st.textContent = "All " + kits.length + " kits copied as one code. Whoever pastes it gets the lot.";
+      } catch(e){
+        $("imp-code").value = code;
+        st.textContent = "Copying is blocked here — the code for all " + kits.length + " kits is in the box above.";
+      }
+    } catch(e){
+      st.hidden = false; st.className = "status err"; st.textContent = "Couldn't pack the shelf.";
+    } finally { btn.disabled = false; }
+  };
+
+  async function consumeHash(){
+    var h = (location.hash || "").replace(/^#/, "");
+    if (!/^(GH|GB)[12]\./.test(h)) return;
+    var n = await importCode(h, $("imp-status"));
+    if (n && LIB.shelf[0]){
+      state.kit = normKit(LIB.shelf[0], "Shared kit");
+      saveKit(); renderNowPlaying(); setTab("play");
+    }
+    try { history.replaceState(null, "", location.pathname + location.search); } catch(e){}
+  }
+
+  /* ---------------- upgrades ---------------- */
+  var UPGRADES = [
+    { key:"pay", name:"Money per question", suffix:"", vals:[1,5,25,100,500,2500,12000],
+      costs:[0,20,200,1500,9000,60000,400000], blurb:"What a correct answer is worth before anything else." },
+    { key:"mult", name:"Multiplier", suffix:"×", vals:[1,1.5,2,3,5,10,25],
+      costs:[0,40,250,1400,8000,45000,300000], blurb:"Multiplies every payout." },
+    { key:"streak", name:"Streak bonus", suffix:"", vals:[0,3,15,75,400,2200],
+      costs:[0,30,300,2200,15000,110000], blurb:"Extra cash per answer in a row without a miss." },
+    { key:"ins", name:"Insurance", suffix:"%", vals:[0,25,50,75,95],
+      costs:[0,35,400,4000,40000], blurb:"Cuts what a wrong answer costs you." }
+  ];
+  function payout(){
+    return Math.round(UPGRADES[0].vals[run.lv.pay] * UPGRADES[1].vals[run.lv.mult]
+      + UPGRADES[2].vals[run.lv.streak] * Math.max(0, run.streak));
+  }
+  function penalty(){
+    var base = UPGRADES[0].vals[run.lv.pay] * UPGRADES[1].vals[run.lv.mult] * 0.5;
+    return Math.round(base * (1 - UPGRADES[3].vals[run.lv.ins] / 100));
+  }
+  function renderShop(){
+    var shelf = $("shelf");
+    shelf.textContent = "";
+    UPGRADES.forEach(function(u){
+      var lv = run.lv[u.key], maxed = lv >= u.vals.length - 1, cost = maxed ? 0 : u.costs[lv + 1];
+      var b = el("button", "up" + (maxed ? " maxed" : ""));
+      b.appendChild(el("strong", null, u.name));
+      b.appendChild(el("span", "lvl", "Level " + (lv + 1) + " of " + u.vals.length));
+      b.appendChild(el("span", "now", "Now: " + u.vals[lv] + u.suffix + " — " + u.blurb));
+      b.appendChild(el("span", "buy", maxed ? "Fully upgraded" : ("Next: " + u.vals[lv+1] + u.suffix + "  ·  " + money(cost))));
+      b.disabled = maxed || run.cash < cost;
+      b.onclick = function(){
+        if (maxed || run.cash < cost) return;
+        run.cash -= cost; run.lv[u.key]++; run.spent += cost;
+        renderShop(); renderHUD();
+      };
+      shelf.appendChild(b);
+    });
+  }
+
+  var BOSSES = [
+    { name:"The Substitute", hp:80,  hit:12 },
+    { name:"The Pop Quiz",   hp:150, hit:17 },
+    { name:"The Final Exam", hp:240, hit:23 }
+  ];
+  var PLAYER_COLORS = ["var(--coral)","var(--teal)","var(--marigold)","var(--sky)"];
+
+  /* ================= the arena =================
+     Roam works the way Gimkit Creative does: you steer your hoot around a map
+     and walk onto a terminal to get a question. The canvas is the walking
+     phase; answering hands over to the ordinary question UI and comes back. */
+  var WORLD_W = 640, WORLD_H = 420;
+  var WALLS = [
+    { x:118, y:86,  w:96,  h:22 }, { x:426, y:86,  w:96,  h:22 },
+    { x:308, y:52,  w:22,  h:104 },
+    { x:118, y:312, w:96,  h:22 }, { x:426, y:312, w:96,  h:22 },
+    { x:308, y:264, w:22,  h:104 },
+    { x:52,  y:196, w:104, h:22 }, { x:484, y:196, w:104, h:22 }
+  ];
+  var PAD_SPOTS = [[68,58],[572,58],[68,362],[572,362],[232,210],[408,210]];
+  var SHOP_SPOT = [320,382];
+  var W = null;
+
+  function hitsWall(x, y, r){
+    for (var i = 0; i < WALLS.length; i++){
+      var w = WALLS[i];
+      var dx = x - clamp(x, w.x, w.x + w.w), dy = y - clamp(y, w.y, w.y + w.h);
+      if (dx * dx + dy * dy < r * r) return true;
+    }
+    return false;
+  }
+  function roundRect(g, x, y, w, h, r){
+    g.beginPath();
+    g.moveTo(x + r, y);
+    g.arcTo(x + w, y, x + w, y + h, r);
+    g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r);
+    g.arcTo(x, y, x + w, y, r);
+    g.closePath();
+  }
+
+  function buildWorld(){
+    var cv = $("wcanvas");
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = WORLD_W * dpr;
+    cv.height = WORLD_H * dpr;
+    var g = cv.getContext("2d");
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    W = {
+      g:g, px:320, py:200, r:14, speed:168,
+      pads:PAD_SPOTS.map(function(p){ return { x:p[0], y:p[1], cool:0 }; }),
+      coins:[], keys:{}, raf:null, last:0, img:new Image(), ok:false,
+      stuck:-1, shopStuck:true, spawn:1.5, t:0, hudT:0,
+      /* mode-tunable knobs; worldInit overrides what it needs */
+      coinRate:0, coinMax:0, coolFor:4.5, useShop:false, padCool:true
+    };
+    W.img.onload = function(){ W.ok = true; };
+    W.img.src = "data:image/svg+xml;base64,"
+      + btoa(unescape(encodeURIComponent(hootSVG(myHoot))));
+    if (run.mode.worldInit) run.mode.worldInit(run, W);
+  }
+
+  function farCorner(){
+    var cs = [[30,30],[WORLD_W-30,30],[30,WORLD_H-30],[WORLD_W-30,WORLD_H-30]];
+    var best = cs[0], bd = -1;
+    cs.forEach(function(c){
+      var d = Math.hypot(c[0] - W.px, c[1] - W.py);
+      if (d > bd){ bd = d; best = c; }
+    });
+    return best;
+  }
+  function moveHunter(h, dt){
+    if (h.frozen > 0){ h.frozen -= dt; return; }
+    var dx = W.px - h.x, dy = W.py - h.y, len = Math.hypot(dx, dy) || 1;
+    var step = h.speed * dt, movedX = false, movedY = false;
+    var nx = h.x + (dx / len) * step, ny = h.y + (dy / len) * step;
+    if (!hitsWall(nx, h.y, 14)){ h.x = clamp(nx, 14, WORLD_W - 14); movedX = true; }
+    if (!hitsWall(h.x, ny, 14)){ h.y = clamp(ny, 14, WORLD_H - 14); movedY = true; }
+    if (!movedX && !movedY){   /* both axes blocked: slide along the wall */
+      var sx = h.x + (dy > 0 ? step : -step);
+      if (!hitsWall(sx, h.y, 14)) h.x = clamp(sx, 14, WORLD_W - 14);
+      else {
+        var sy = h.y + (dx > 0 ? step : -step);
+        if (!hitsWall(h.x, sy, 14)) h.y = clamp(sy, 14, WORLD_H - 14);
+      }
+    }
+  }
+  function drawHunter(g, h){
+    var chilled = h.frozen > 0;
+    g.beginPath();
+    g.ellipse(h.x, h.y + 15, 14, 5, 0, 0, Math.PI * 2);
+    g.fillStyle = "rgba(0,0,0,.42)";
+    g.fill();
+    g.fillStyle = chilled ? "#3F6E8C" : "#170A20";
+    g.beginPath(); g.moveTo(h.x - 13, h.y - 5); g.lineTo(h.x - 18, h.y - 25); g.lineTo(h.x - 2, h.y - 14); g.closePath(); g.fill();
+    g.beginPath(); g.moveTo(h.x + 13, h.y - 5); g.lineTo(h.x + 18, h.y - 25); g.lineTo(h.x + 2, h.y - 14); g.closePath(); g.fill();
+    g.beginPath(); g.ellipse(h.x, h.y, 16, 18, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = chilled ? "#9FD8F2" : "#FF4D5E";
+    g.beginPath(); g.arc(h.x - 6, h.y - 4, 3.8, 0, Math.PI * 2); g.fill();
+    g.beginPath(); g.arc(h.x + 6, h.y - 4, 3.8, 0, Math.PI * 2); g.fill();
+  }
+  function fmtTime(sec){
+    var m = Math.floor(sec / 60), s = sec - m * 60;
+    return m + ":" + (s < 10 ? "0" : "") + s.toFixed(1);
+  }
+
+  function spawnCoin(){
+    for (var tries = 0; tries < 25; tries++){
+      var x = 28 + Math.random() * (WORLD_W - 56);
+      var y = 28 + Math.random() * (WORLD_H - 56);
+      if (hitsWall(x, y, 16)) continue;
+      if (Math.hypot(x - W.px, y - W.py) < 70) continue;
+      W.coins.push({ x:x, y:y, born:W.t });
+      return;
+    }
+  }
+
+  function stepWorld(dt){
+    var dx = (W.keys.r ? 1 : 0) - (W.keys.l ? 1 : 0);
+    var dy = (W.keys.d ? 1 : 0) - (W.keys.u ? 1 : 0);
+    if (dx && dy){ dx *= 0.7071; dy *= 0.7071; }
+    var step = W.speed * dt;
+
+    var nx = clamp(W.px + dx * step, W.r, WORLD_W - W.r);
+    if (!hitsWall(nx, W.py, W.r)) W.px = nx;
+    var ny = clamp(W.py + dy * step, W.r, WORLD_H - W.r);
+    if (!hitsWall(W.px, ny, W.r)) W.py = ny;
+
+    W.t += dt;
+    W.pads.forEach(function(p){ if (p.cool > 0) p.cool -= dt; });
+
+    /* a pad you just used cannot fire again until you have walked off it */
+    if (W.stuck >= 0 && Math.hypot(W.px - W.pads[W.stuck].x, W.py - W.pads[W.stuck].y) > 46) W.stuck = -1;
+    if (W.shopStuck && Math.hypot(W.px - SHOP_SPOT[0], W.py - SHOP_SPOT[1]) > 50) W.shopStuck = false;
+
+    if (W.coinRate > 0){
+      W.spawn -= dt;
+      if (W.spawn <= 0 && W.coins.length < W.coinMax){
+        spawnCoin();
+        W.spawn = W.coinRate * (0.75 + Math.random() * 0.6);
+      }
+    }
+    for (var i = W.coins.length - 1; i >= 0; i--){
+      var c = W.coins[i];
+      if (Math.hypot(W.px - c.x, W.py - c.y) < W.r + 9){
+        W.coins.splice(i, 1);
+        (run.mode.onCoin || function(r){ r.cash += Math.max(1, Math.round(payout() * 0.12)); r.picked++; })(run, W, c);
+        renderHUD();
+        if (run.mode.over(run)){ finish(); return; }
+      }
+    }
+
+    if (run.mode.worldStep){
+      run.mode.worldStep(run, W, dt);
+      if (!W || !run || run.ended || run.phase !== "walk") return;
+      if (run.mode.over(run)){ finish(); return; }
+    }
+
+    W.hudT -= dt;
+    if (W.hudT <= 0){ renderHUD(); W.hudT = 0.2; }
+
+    for (var j = 0; j < W.pads.length; j++){
+      var p = W.pads[j];
+      if (!padLive(j) || W.stuck === j) continue;
+      if (Math.hypot(W.px - p.x, W.py - p.y) < 27){ enterQuestionPhase(j); return; }
+    }
+    if (W.useShop && !W.shopStuck && Math.hypot(W.px - SHOP_SPOT[0], W.py - SHOP_SPOT[1]) < 29){ enterShopPhase(); }
+  }
+
+  function padLive(i){
+    if (run.mode.padLive) return run.mode.padLive(run, W, i);
+    return W.pads[i].cool <= 0;
+  }
+
+  function drawWorld(){
+    var g = W.g;
+    g.fillStyle = "#241432";
+    g.fillRect(0, 0, WORLD_W, WORLD_H);
+    g.strokeStyle = "rgba(74,44,99,.5)";
+    g.lineWidth = 1;
+    for (var x = 40; x < WORLD_W; x += 40){ g.beginPath(); g.moveTo(x + .5, 0); g.lineTo(x + .5, WORLD_H); g.stroke(); }
+    for (var y = 40; y < WORLD_H; y += 40){ g.beginPath(); g.moveTo(0, y + .5); g.lineTo(WORLD_W, y + .5); g.stroke(); }
+
+    g.fillStyle = "#4A2C63";
+    WALLS.forEach(function(w){ roundRect(g, w.x, w.y, w.w, w.h, 8); g.fill(); });
+
+    var pulse = 0.5 + 0.5 * Math.sin(W.t * 3);
+
+    g.textAlign = "center";
+    g.textBaseline = "middle";
+
+    /* the shop */
+    if (W.useShop){
+      g.save();
+      roundRect(g, SHOP_SPOT[0] - 24, SHOP_SPOT[1] - 24, 48, 48, 11);
+      g.fillStyle = "#23D2B5";
+      g.shadowColor = "rgba(35,210,181,.7)";
+      g.shadowBlur = 14 + pulse * 8;
+      g.fill();
+      g.restore();
+      g.fillStyle = "#04302A";
+      g.font = '700 24px "Bricolage Grotesque", system-ui, sans-serif';
+      g.fillText("$", SHOP_SPOT[0], SHOP_SPOT[1] + 1);
+    }
+
+    /* the terminals */
+    W.pads.forEach(function(p, pi){
+      var ready = padLive(pi);
+      g.save();
+      roundRect(g, p.x - 23, p.y - 23, 46, 46, 11);
+      if (ready){
+        g.fillStyle = "#FFB627";
+        g.shadowColor = "rgba(255,182,39,.75)";
+        g.shadowBlur = 12 + pulse * 10;
+      } else {
+        g.fillStyle = "#35203F";
+      }
+      g.fill();
+      g.restore();
+      if (ready){
+        g.fillStyle = "#2A1200";
+        g.font = '800 26px "Bricolage Grotesque", system-ui, sans-serif';
+        g.fillText("?", p.x, p.y + 2);
+      } else if (p.cool > 0){
+        g.strokeStyle = "#B49BC8";
+        g.lineWidth = 3;
+        g.beginPath();
+        g.arc(p.x, p.y, 14, -Math.PI / 2, -Math.PI / 2 + (1 - p.cool / W.coolFor) * Math.PI * 2);
+        g.stroke();
+      }
+    });
+
+    /* coins — they ripen, so older ones are worth more and look it */
+    W.coins.forEach(function(c){
+      var bob = Math.sin((W.t - c.born) * 4) * 2;
+      var ripe = clamp((W.t - c.born) / 6, 0, 1);
+      g.beginPath();
+      g.arc(c.x, c.y + bob, 8 + ripe * 2, 0, Math.PI * 2);
+      g.fillStyle = ripe > 0.66 ? "#FF9A52" : "#FFB627";
+      g.fill();
+      g.beginPath();
+      g.arc(c.x, c.y + bob, 4, 0, Math.PI * 2);
+      g.strokeStyle = "#B87C00";
+      g.lineWidth = 2;
+      g.stroke();
+    });
+
+    if (run.mode.worldDraw) run.mode.worldDraw(run, W, g);
+
+    /* the hoot */
+    g.beginPath();
+    g.ellipse(W.px, W.py + 15, 15, 5, 0, 0, Math.PI * 2);
+    g.fillStyle = "rgba(0,0,0,.34)";
+    g.fill();
+    if (W.ok) g.drawImage(W.img, W.px - 19, W.py - 22, 38, 38);
+  }
+
+  function worldLoop(ts){
+    if (!W || !run || run.ended || run.phase !== "walk") return;
+    var dt = clamp((ts - W.last) / 1000, 0, 0.05);
+    W.last = ts;
+    stepWorld(dt);
+    if (!W || !run || run.ended || run.phase !== "walk") return;
+    drawWorld();
+    W.raf = requestAnimationFrame(worldLoop);
+  }
+
+  function enterWalk(){
+    run.phase = "walk";
+    $("world").hidden = false;
+    $("qcard").hidden = true;
+    $("tiles").hidden = true;
+    $("feedback").hidden = true;
+    $("shop").hidden = true;
+    $("timerbar").hidden = true;
+    W.last = performance.now();
+    W.raf = requestAnimationFrame(worldLoop);
+  }
+  function leaveWalk(){
+    if (W && W.raf) cancelAnimationFrame(W.raf);
+    $("world").hidden = true;
+  }
+  function enterQuestionPhase(padIdx){
+    run.phase = "question";
+    run.padIdx = padIdx;
+    W.stuck = padIdx;
+    W.keys = {};
+    document.querySelectorAll(".dpad button").forEach(function(b){ b.classList.remove("held"); });
+    leaveWalk();
+    askQuestion();
+  }
+  function enterShopPhase(){
+    run.phase = "shop";
+    W.shopStuck = true;
+    W.keys = {};
+    leaveWalk();
+    renderShop();
+    $("shop").hidden = false;
+  }
+  function resumeAfterQuestion(){
+    var pad = W.pads[run.padIdx];
+    if (pad) pad.cool = W.coolFor;
+    if (run.mode.afterQuestion) run.mode.afterQuestion(run, W, run.lastOk);
+    if (run.mode.over(run)){ finish(); return; }
+    enterWalk();
+  }
+
+  var WKEYS = { ArrowUp:"u", ArrowDown:"d", ArrowLeft:"l", ArrowRight:"r",
+    w:"u", a:"l", s:"d", d:"r", W:"u", A:"l", S:"d", R:"r" };
+  document.addEventListener("keydown", function(e){
+    if (!W || !run || run.ended || run.phase !== "walk") return;
+    var k = WKEYS[e.key] || WKEYS[String(e.key).toLowerCase()];
+    if (k){ W.keys[k] = true; e.preventDefault(); }
+  });
+  document.addEventListener("keyup", function(e){
+    if (!W) return;
+    var k = WKEYS[e.key] || WKEYS[String(e.key).toLowerCase()];
+    if (k) W.keys[k] = false;
+  });
+  Array.prototype.forEach.call($("dpad").children, function(b){
+    var d = b.dataset.d;
+    function on(e){ e.preventDefault(); if (W) W.keys[d] = true; b.classList.add("held"); }
+    function off(e){ if (W) W.keys[d] = false; b.classList.remove("held"); }
+    b.addEventListener("pointerdown", on);
+    b.addEventListener("pointerup", off);
+    b.addEventListener("pointerleave", off);
+    b.addEventListener("pointercancel", off);
+  });
+
+  /* ---------------- modes ---------------- */
+  var MODES = {
+    roam:{
+      name:"Roam", kick:"Mode 01 · walk and answer", cls:"m-roam",
+      hint:"step on a lit terminal for a question · the green pad is the shop",
+      blurb:"Steer your hoot around the arena. Walk onto a lit terminal for a question, bank the cash, spend it at the green pad, and scoop up the coins that drop.",
+      loop:true, world:true, shop:true, time:function(){ return 0; },
+      option:{ key:"goal", label:"Goal", choices:[["2000","$2k"],["10000","$10k"],["50000","$50k"]], def:"10000" },
+      init:function(r){
+        r.cash = 0; r.spent = 0; r.picked = 0;
+        r.goal = Number(r.opt) || 10000;
+        r.lv = { pay:0, mult:0, streak:0, ins:0 };
+      },
+      worldInit:function(r, w){ w.coinRate = 3.6; w.coinMax = 6; w.useShop = true; w.coolFor = 4.5; },
+      resolve:function(r, ok){
+        if (ok){ var g = payout(); r.cash += g; return { note:"+" + money(g) }; }
+        var l = Math.min(r.cash, penalty());
+        r.cash -= l;
+        return { note:l > 0 ? ("−" + money(l)) : null };
+      },
+      over:function(r){ return r.cash >= r.goal; },
+      hud:function(r){ return [["cash", money(r.cash), "Bank"], ["streak", r.streak ? "×"+r.streak : "—", "Streak"]]; },
+      gauge:function(r){ return { label:"Goal " + money(r.goal), pct:(r.cash / r.goal) * 100 }; },
+      subtitle:function(){ return money(payout()) + " if you're right"; },
+      result:function(r){
+        return { big:money(r.cash),
+          sub:r.cash >= r.goal ? "goal reached — you can stop walking now" : "banked before you called it a day",
+          pills:[["Coins scooped", num(r.picked)], ["Spent on upgrades", money(r.spent)]],
+          best:r.cash, bestFmt:money };
+      }
+    },
+    chase:{
+      name:"Chase", kick:"Mode 02 · something is following you", cls:"m-chase",
+      hint:"keep away from the shadow · answering scares it off and freezes it",
+      blurb:"A shadow hoot hunts you across the arena. A right answer scares it into a far corner and freezes it; a wrong one makes it faster. Three lives.",
+      loop:true, world:true, time:function(){ return 0; },
+      init:function(r){ r.lives = 3; r.caught = 0; },
+      worldInit:function(r, w){
+        w.coinRate = 0; w.useShop = false; w.coolFor = 2.5;
+        w.hunter = { x:WORLD_W - 40, y:WORLD_H - 40, speed:96, frozen:1.5 };
+        w.grace = 1.5;
+      },
+      worldStep:function(r, w, dt){
+        if (w.grace > 0) w.grace -= dt;
+        moveHunter(w.hunter, dt);
+        if (w.grace <= 0 && w.hunter.frozen <= 0
+            && Math.hypot(w.px - w.hunter.x, w.py - w.hunter.y) < 26){
+          r.lives--;
+          r.caught++;
+          w.px = 320; w.py = 200;
+          var c = farCorner();
+          w.hunter.x = c[0]; w.hunter.y = c[1];
+          w.hunter.frozen = 1.2;
+          w.grace = 1.5;
+          renderHUD();
+        }
+      },
+      worldDraw:function(r, w, g){ drawHunter(g, w.hunter); },
+      afterQuestion:function(r, w, ok){
+        if (ok){
+          var c = farCorner();
+          w.hunter.x = c[0]; w.hunter.y = c[1];
+          w.hunter.frozen = 3;
+        } else {
+          w.hunter.speed = Math.min(152, w.hunter.speed + 11);
+        }
+        w.grace = 1;
+      },
+      resolve:function(r, ok){ return { note:ok ? "It backs off" : "It picks up speed" }; },
+      over:function(r){ return r.lives <= 0; },
+      hud:function(r){ return [["", num(r.correct), "Answered"], ["danger", "♥".repeat(Math.max(0, r.lives)) || "—", "Lives"], ["streak", r.streak ? "×"+r.streak : "—", "Streak"]]; },
+      result:function(r){ return { big:num(r.correct), sub:"questions answered before it caught you three times", best:r.correct, bestFmt:num }; }
+    },
+
+    circuit:{
+      name:"Circuit", kick:"Mode 03 · against the clock", cls:"m-circuit",
+      hint:"follow the dotted line · only the lit checkpoint counts · a wrong answer costs five seconds",
+      blurb:"Ten checkpoints, one lit at a time. Run to it, answer, run to the next. A wrong answer costs you five seconds. Fastest lap wins.",
+      loop:true, world:true, time:function(){ return 0; },
+      option:{ key:"laps", label:"Checkpoints", choices:[["6","6"],["10","10"],["16","16"]], def:"10" },
+      init:function(r){
+        r.legs = Number(r.opt) || 10;
+        r.leg = 0; r.elapsed = 0; r.penalty = 0;
+      },
+      worldInit:function(r, w){
+        w.coinRate = 0; w.useShop = false; w.padCool = false;
+        w.target = Math.floor(Math.random() * w.pads.length);
+      },
+      padLive:function(r, w, i){ return i === w.target; },
+      worldStep:function(r, w, dt){ r.elapsed += dt; },
+      worldDraw:function(r, w, g){
+        var p = w.pads[w.target];
+        g.save();
+        g.strokeStyle = "rgba(255,182,39,.5)";
+        g.lineWidth = 3;
+        g.setLineDash([9, 9]);
+        g.lineDashOffset = -w.t * 26;
+        g.beginPath();
+        g.moveTo(w.px, w.py);
+        g.lineTo(p.x, p.y);
+        g.stroke();
+        g.restore();
+      },
+      afterQuestion:function(r, w, ok){
+        if (!ok){ r.penalty += 5; r.elapsed += 5; }
+        r.leg++;
+        var next = w.target;
+        while (next === w.target) next = Math.floor(Math.random() * w.pads.length);
+        w.target = next;
+      },
+      resolve:function(r, ok){
+        return { note:ok ? ("Checkpoint " + (r.leg + 1) + " of " + r.legs) : "Five seconds added" };
+      },
+      over:function(r){ return r.leg >= r.legs; },
+      hud:function(r){ return [["", (r.leg) + "/" + r.legs, "Checkpoints"], ["danger", fmtTime(r.elapsed), "Clock"], ["streak", r.penalty ? ("+" + r.penalty + "s") : "—", "Penalties"]]; },
+      result:function(r){
+        return { big:fmtTime(r.elapsed),
+          sub:r.leg >= r.legs ? "to run the whole circuit" : "before you gave up",
+          pills:[["Penalties", "+" + r.penalty + "s"]],
+          best:r.leg >= r.legs ? Math.round(r.elapsed * 10) / 10 : undefined,
+          bestFmt:fmtTime, lower:true };
+      }
+    },
+
+    hoard:{
+      name:"Hoard", kick:"Mode 04 · ninety seconds of greed", cls:"m-hoard",
+      hint:"coins ripen where they land · answer at a terminal to double what the next ones pay",
+      blurb:"Coins rain across the arena and ripen where they land. Scoop them up; answer at a terminal to double what the next ones are worth. Ninety seconds.",
+      loop:true, world:true, time:function(){ return 0; },
+      init:function(r){ r.cash = 0; r.picked = 0; r.mult = 1; r.multLeft = 0; r.best_mult = 1; r.spent = 0; r.lv = { pay:0, mult:0, streak:0, ins:0 }; },
+      worldInit:function(r, w){
+        w.coinRate = 1.1; w.coinMax = 14; w.useShop = false; w.coolFor = 3;
+        w.left = 90;
+      },
+      onCoin:function(r, w, c){
+        var ripe = 1 + clamp((w.t - c.born) / 6, 0, 1) * 2;      /* up to three times */
+        r.cash += Math.round(8 * ripe * r.mult);
+        r.picked++;
+      },
+      worldStep:function(r, w, dt){
+        w.left -= dt;
+        if (r.multLeft > 0){
+          r.multLeft -= dt;
+          if (r.multLeft <= 0) r.mult = 1;
+        }
+        if (w.left <= 0) finish();
+      },
+      worldDraw:function(r, w, g){
+        if (r.mult > 1){
+          g.save();
+          g.strokeStyle = "rgba(255,77,94,.55)";
+          g.lineWidth = 3;
+          g.beginPath();
+          g.arc(w.px, w.py, 26 + Math.sin(w.t * 6) * 2, 0, Math.PI * 2);
+          g.stroke();
+          g.restore();
+        }
+      },
+      afterQuestion:function(r, w, ok){
+        if (ok){
+          r.mult = Math.min(4, r.mult * 2);
+          r.multLeft = 10;
+          if (r.mult > r.best_mult) r.best_mult = r.mult;
+        } else {
+          r.mult = 1; r.multLeft = 0;
+        }
+      },
+      resolve:function(r, ok){ return { note:ok ? ("Coins now pay ×" + r.mult + " for ten seconds") : "Multiplier lost" }; },
+      over:function(){ return false; },
+      hud:function(r){
+        return [["cash", money(r.cash), "Hoard"],
+                ["danger", Math.max(0, Math.ceil(W ? W.left : 0)) + "s", "Left"],
+                ["streak", r.mult > 1 ? ("×" + r.mult) : "—", "Coin rate"]];
+      },
+      result:function(r){
+        return { big:money(r.cash), sub:"hoarded in ninety seconds",
+          pills:[["Coins scooped", num(r.picked)], ["Best coin rate", "×" + r.best_mult]],
+          best:r.cash, bestFmt:money };
+      }
+    },
+
+    blitz:{
+      name:"Blitz", kick:"Mode 05 · fastest finger", cls:"m-blitz",
+      blurb:"Twenty seconds a question. Answer fast for more points, keep a streak alive for the bonus. One pass through the kit.",
+      loop:false, time:function(){ return 20000; },
+      init:function(r){ r.score = 0; },
+      resolve:function(r, ok, speed){
+        if (!ok) return { note:null };
+        var g = Math.round(1000 * (0.5 + speed * 0.5)) + Math.min(r.streak - 1, 5) * 100;
+        r.score += g;
+        return { note:"+" + num(g) + " points" };
+      },
+      over:function(r){ return r.i + 1 >= r.items.length; },
+      hud:function(r){ return [["", num(r.score), "Score"], ["streak", r.streak ? "×"+r.streak : "—", "Streak"], ["", (r.i+1)+"/"+r.items.length, "Question"]]; },
+      result:function(r){ return { big:num(r.score), sub:"points from " + (r.correct+r.wrong) + " questions", best:r.score, bestFmt:num }; }
+    },
+    tycoon:{
+      name:"Tycoon", kick:"Mode 06 · build an empire", cls:"m-tycoon",
+      blurb:"No clock. Right answers pay cash — spend it on multipliers, streak bonuses and insurance until you hit the goal.",
+      loop:true, time:function(){ return 0; }, shop:true,
+      option:{ key:"goal", label:"Goal", choices:[["10000","$10k"],["100000","$100k"],["1000000","$1M"]], def:"100000" },
+      init:function(r){ r.cash = 0; r.spent = 0; r.goal = Number(r.opt) || 100000; r.lv = {pay:0,mult:0,streak:0,ins:0}; },
+      resolve:function(r, ok){
+        if (ok){ var g = payout(); r.cash += g; return { note:"+" + money(g) }; }
+        var l = Math.min(r.cash, penalty());
+        r.cash -= l;
+        return { note:l > 0 ? ("−" + money(l)) : null };
+      },
+      over:function(r){ return r.cash >= r.goal; },
+      hud:function(r){ return [["cash", money(r.cash), "Bank"], ["streak", r.streak ? "×"+r.streak : "—", "Streak"]]; },
+      gauge:function(r){ return { label:"Goal " + money(r.goal), pct:(r.cash / r.goal) * 100 }; },
+      subtitle:function(){ return money(payout()) + " if you're right"; },
+      result:function(r){
+        return { big:money(r.cash), sub:r.cash >= r.goal ? "Goal reached — empire complete." : "banked before you cashed out",
+                 pills:[["Spent on upgrades", money(r.spent)]], best:r.cash, bestFmt:money };
+      }
+    },
+    survival:{
+      name:"Survival", kick:"Mode 07 · don't blink", cls:"m-survival",
+      blurb:"Three lives, and the clock gets meaner every question — fifteen seconds down to four. How deep can you get?",
+      loop:true, time:function(r){ return Math.max(4000, 15000 - (r.correct + r.wrong) * 450); },
+      init:function(r){ r.lives = 3; },
+      resolve:function(r, ok){
+        if (ok) return { note:"Survived" };
+        r.lives--;
+        return { note:r.lives > 0 ? (r.lives + " " + (r.lives === 1 ? "life" : "lives") + " left") : "Out of lives" };
+      },
+      over:function(r){ return r.lives <= 0; },
+      hud:function(r){ return [["", num(r.correct), "Survived"], ["streak", r.streak ? "×"+r.streak : "—", "Streak"], ["", Math.round(MODES.survival.time(r)/1000) + "s", "Clock"]]; },
+      extra:function(r, node){
+        var h = el("div", "hearts");
+        for (var i = 0; i < 3; i++) h.appendChild(el("i", i < r.lives ? "" : "gone", "♥"));
+        node.appendChild(h);
+      },
+      result:function(r){ return { big:num(r.correct), sub:"questions survived before the lives ran out", best:r.correct, bestFmt:num }; }
+    },
+    sudden:{
+      name:"Sudden Death", kick:"Mode 08 · one mistake", cls:"m-sudden",
+      blurb:"Twelve seconds a question, endless questions, and exactly one wrong answer allowed. Which is none.",
+      loop:true, time:function(){ return 12000; },
+      init:function(r){ r.dead = false; },
+      resolve:function(r, ok){ if (!ok) r.dead = true; return { note:ok ? ("Run of " + r.streak) : "That's the run" }; },
+      over:function(r){ return r.dead; },
+      hud:function(r){ return [["streak", num(r.streak), "In a row"], ["", num(r.best), "Best today"]]; },
+      result:function(r){ return { big:num(r.best), sub:"correct answers in a row before the first miss", best:r.best, bestFmt:num }; }
+    },
+    boss:{
+      name:"Boss Fight", kick:"Mode 09 · three duels", cls:"m-boss",
+      blurb:"Three examiners stand between you and the door. Right answers hurt them, wrong ones hurt you. Fifteen seconds a swing.",
+      loop:true, time:function(){ return 15000; },
+      init:function(r){ r.hp = 100; r.bossIdx = 0; r.bossHp = BOSSES[0].hp; r.beaten = 0; },
+      resolve:function(r, ok, speed){
+        var boss = BOSSES[r.bossIdx];
+        if (ok){
+          var dmg = 14 + Math.round(12 * speed);
+          r.bossHp -= dmg;
+          if (r.bossHp <= 0){
+            r.beaten++;
+            if (r.bossIdx < BOSSES.length - 1){
+              r.bossIdx++; r.bossHp = BOSSES[r.bossIdx].hp; r.hp = Math.min(100, r.hp + 25);
+              return { note:boss.name + " is down! " + BOSSES[r.bossIdx].name + " steps up (+25 HP)" };
+            }
+            r.bossHp = 0;
+            return { note:"All three examiners beaten." };
+          }
+          return { note:dmg + " damage · " + boss.name + " on " + r.bossHp + " HP" };
+        }
+        r.hp -= boss.hit;
+        return { note:boss.name + " hits you for " + boss.hit + (r.hp > 0 ? (" · " + r.hp + " HP left") : " · you're done") };
+      },
+      over:function(r){ return r.hp <= 0 || r.beaten >= BOSSES.length; },
+      hud:function(r){ return [["", r.beaten + "/" + BOSSES.length, "Beaten"], ["streak", r.streak ? "×"+r.streak : "—", "Streak"]]; },
+      extra:function(r, node){
+        var d = el("div", "duel"), b = BOSSES[Math.min(r.bossIdx, BOSSES.length - 1)];
+        var f1 = el("div", "fighter"), w1 = el("div", "who");
+        w1.appendChild(el("b", null, b.name));
+        w1.appendChild(el("em", null, Math.max(0, r.bossHp) + " / " + b.hp + " HP"));
+        f1.appendChild(w1); f1.appendChild(bar((r.bossHp / b.hp) * 100));
+        var f2 = el("div", "fighter me"), w2 = el("div", "who");
+        w2.appendChild(el("b", null, "You"));
+        w2.appendChild(el("em", null, Math.max(0, r.hp) + " / 100 HP"));
+        f2.appendChild(w2); f2.appendChild(bar(r.hp));
+        d.appendChild(f1); d.appendChild(f2);
+        node.appendChild(d);
+      },
+      result:function(r){
+        var won = r.beaten >= BOSSES.length;
+        return { big:r.beaten + "/" + BOSSES.length,
+                 sub:won ? "every examiner beaten — you're out of there" : "examiners beaten before you ran out of HP",
+                 pills:[["HP left", Math.max(0, r.hp)]] };
+      }
+    },
+    climb:{
+      name:"Climb", kick:"Mode 10 · fifteen rungs", cls:"m-climb",
+      blurb:"Up one rung for every right answer, down one for a wrong one — and down two once you're past halfway. Reach the top.",
+      loop:true, time:function(){ return 18000; },
+      init:function(r){ r.rung = 0; r.peak = 0; },
+      resolve:function(r, ok){
+        if (ok){
+          r.rung = Math.min(15, r.rung + 1);
+          if (r.rung > r.peak) r.peak = r.rung;
+          return { note:"Rung " + r.rung + " of 15" };
+        }
+        var drop = r.rung >= 8 ? 2 : 1;
+        r.rung = Math.max(0, r.rung - drop);
+        return { note:"Down " + drop + " · back to rung " + r.rung };
+      },
+      over:function(r){ return r.rung >= 15; },
+      hud:function(r){ return [["", r.rung + "/15", "Rung"], ["", num(r.peak), "Highest"], ["streak", r.streak ? "×"+r.streak : "—", "Streak"]]; },
+      extra:function(r, node){
+        var l = el("div", "ladder");
+        for (var i = 1; i <= 15; i++){
+          var seg = el("i", i < r.rung ? "on" : (i === r.rung ? "you" : ""));
+          seg.style.height = (24 + i * 3.4) + "px";
+          l.appendChild(seg);
+        }
+        node.appendChild(l);
+      },
+      result:function(r){ return { big:r.peak + "/15", sub:r.rung >= 15 ? "top of the ladder — clean climb" : "highest rung reached", best:r.peak, bestFmt:num }; }
+    },
+    snap:{
+      name:"Snap", kick:"Mode 11 · sixty seconds", cls:"m-snap",
+      blurb:"True or false, as fast as you can read. One statement at a time, a single minute on the clock, no penalty for guessing wrong.",
+      loop:true, fast:true, global:60000, time:function(){ return 0; }, snap:true,
+      usable:function(kit){ return kit.questions.filter(snapReady).length >= 2; },
+      why:"Needs at least two multiple-choice questions.",
+      init:function(r){ r.score = 0; },
+      resolve:function(r, ok){ if (ok){ r.score++; return { note:"+1" }; } return { note:null }; },
+      over:function(){ return false; },
+      hud:function(r){ return [["", num(r.score), "Correct"], ["danger", Math.ceil(r.globalLeft/1000) + "s", "Left"], ["streak", r.streak ? "×"+r.streak : "—", "Streak"]]; },
+      result:function(r){ return { big:num(r.score), sub:"true-or-false calls in sixty seconds", best:r.score, bestFmt:num }; }
+    },
+    study:{
+      name:"Study", kick:"Mode 12 · no clock, no score", cls:"m-study",
+      blurb:"Every question until you've answered it right twice in a row. Miss one and it comes back later. Ends when the whole kit is yours.",
+      loop:true, mastery:true, time:function(){ return 0; }, alwaysWhy:true,
+      init:function(r){
+        r.queue = shuffle(state.kit.questions.map(function(_, i){ return { qi:i, got:0 }; }));
+        r.mastered = 0;
+        r.total = state.kit.questions.length;
+      },
+      resolve:function(r, ok){
+        var cur = r.queue[0];
+        if (ok){
+          cur.got++;
+          if (cur.got >= 2){ r.queue.shift(); r.mastered++; return { note:"Mastered — " + r.mastered + " of " + r.total }; }
+          r.queue.push(r.queue.shift());
+          return { note:"Once more later to lock it in" };
+        }
+        cur.got = 0;
+        r.queue.push(r.queue.shift());
+        return { note:"Back in the pile" };
+      },
+      over:function(r){ return r.queue.length === 0; },
+      hud:function(r){ return [["", r.mastered + "/" + r.total, "Mastered"], ["", num(r.queue.length), "Still to go"]]; },
+      gauge:function(r){ return { label:"Progress", pct:(r.mastered / r.total) * 100 }; },
+      result:function(r){ return { big:r.mastered + "/" + r.total, sub:"questions mastered — two right in a row each" }; }
+    },
+    relay:{
+      name:"Pass & Play", kick:"Mode 13 · one device, many players", cls:"m-relay",
+      blurb:"Take it in turns round the table. Twenty seconds each, Blitz scoring, one pass through the kit, then a leaderboard.",
+      loop:false, time:function(){ return 20000; },
+      option:{ key:"players", label:"Players", choices:[["2","2"],["3","3"],["4","4"]], def:"2" },
+      init:function(r){
+        var n = Number(r.opt) || 2;
+        var pool = [myHoot].concat(HOOTS.filter(function(h){ return isUnlocked(h) && h.id !== myHoot.id; }));
+        r.players = [];
+        for (var i = 0; i < n; i++){
+          r.players.push({ name:"Player " + (i+1), score:0, right:0, wrong:0, hoot:pool[i % pool.length] });
+        }
+        r.turn = 0;
+      },
+      resolve:function(r, ok, speed){
+        var p = r.players[r.turn];
+        if (ok){
+          var g = Math.round(1000 * (0.5 + speed * 0.5));
+          p.score += g; p.right++;
+          return { note:p.name + " scores " + num(g) };
+        }
+        p.wrong++;
+        return { note:p.name + " gets nothing" };
+      },
+      advance:function(r){ r.turn = (r.turn + 1) % r.players.length; },
+      over:function(r){ return r.i + 1 >= r.items.length; },
+      hud:function(r){ return [["", (r.i+1)+"/"+r.items.length, "Question"]]; },
+      extra:function(r, node){
+        var t = el("div", "turnbar");
+        t.style.borderLeftColor = PLAYER_COLORS[r.turn % 4];
+        var av = el("span", "hootart");
+        av.innerHTML = hootSVG(r.players[r.turn].hoot);
+        t.appendChild(av);
+        t.appendChild(el("b", null, r.players[r.turn].name + "'s turn"));
+        var s = el("div", "scores");
+        r.players.forEach(function(p, i){
+          var chip = el("span");
+          chip.appendChild(document.createTextNode(p.name.replace("Player ", "P") + " "));
+          chip.appendChild(el("b", null, num(p.score)));
+          if (i === r.turn) chip.style.color = PLAYER_COLORS[i % 4];
+          s.appendChild(chip);
+        });
+        t.appendChild(s);
+        node.appendChild(t);
+      },
+      subtitle:function(r){ return r.players[r.turn].name + " to answer"; },
+      result:function(r){
+        var rank = r.players.slice().sort(function(a, b){ return b.score - a.score; });
+        return { big:num(rank[0].score), sub:rank[0].name + " takes it", board:rank, noStreakPills:true };
+      }
+    }
+  };
+  var MODE_ORDER = ["roam","chase","circuit","hoard","blitz","tycoon","survival","sudden","boss","climb","snap","study","relay"];
+
+  function snapReady(q){
+    return q.type === "mc"
+      && q.options.some(function(o){ return o.c; })
+      && q.options.some(function(o){ return !o.c; });
+  }
+
+  function refreshModeCard(card){
+    var id = card.dataset.mode, m = MODES[id];
+    var ok = state.kit.questions.length >= 2 && (!m.usable || m.usable(state.kit));
+    var btn = card.querySelector(".play");
+    btn.disabled = !ok;
+    var warn = card.querySelector(".warn");
+    warn.textContent = ok ? "" :
+      (state.kit.questions.length < 2 ? "Needs at least two questions." : (m.why || "Not available for this kit."));
+  }
+
+  function renderModes(){
+    var wrap = $("modes");
+    wrap.textContent = "";
+    MODE_ORDER.forEach(function(id){
+      var m = MODES[id];
+      var c = el("div", "mode " + m.cls);
+      c.dataset.mode = id;
+      c.appendChild(el("span", "kick", m.kick));
+      c.appendChild(el("h3", null, m.name));
+      c.appendChild(el("p", "blurb", m.blurb));
+      var chosen = m.option ? m.option.def : null;
+      if (m.option){
+        var o = el("label", "opt");
+        o.appendChild(document.createTextNode(m.option.label));
+        var s = el("select");
+        m.option.choices.forEach(function(ch){
+          var op = el("option", null, ch[1]);
+          op.value = ch[0];
+          if (ch[0] === m.option.def) op.selected = true;
+          s.appendChild(op);
+        });
+        s.onchange = function(){ chosen = s.value; };
+        o.appendChild(s);
+        c.appendChild(o);
+      }
+      c.appendChild(el("p", "warn", ""));
+      var play = el("button", "play", "Play " + m.name);
+      play.onclick = function(){ startRun(id, chosen); };
+      c.appendChild(play);
+      wrap.appendChild(c);
+    });
+  }
+
+  /* ---------------- screens ---------------- */
+  function show(which){
+    $("s-setup").hidden = which !== "setup";
+    $("s-play").hidden = which !== "play";
+    $("s-results").hidden = which !== "results";
+    window.scrollTo({ top:0, behavior:"smooth" });
+  }
+
+  function prep(q){
+    if (q.type === "text") return { q:q.q, type:"text", accept:q.accept, why:q.why };
+    return { q:q.q, type:"mc", why:q.why,
+      opts:shuffle(q.options.map(function(o){ return { text:o.t, correct:!!o.c }; })) };
+  }
+  function prepSnap(q){
+    var rights = q.options.filter(function(o){ return o.c; });
+    var wrongs = q.options.filter(function(o){ return !o.c; });
+    var useCorrect = Math.random() < 0.5;
+    var pool = useCorrect ? rights : wrongs;
+    var claim = pool[Math.floor(Math.random() * pool.length)].t;
+    return { q:q.q, type:"mc", claim:claim, why:q.why,
+      opts:[{ text:"True", correct:useCorrect }, { text:"False", correct:!useCorrect }] };
+  }
+  function buildItems(mode){
+    if (mode.snap) return shuffle(state.kit.questions.filter(snapReady)).map(prepSnap);
+    return shuffle(state.kit.questions).map(prep);
+  }
+
+  function startRun(id, opt){
+    var mode = MODES[id];
+    run = {
+      id:id, mode:mode, opt:opt, items:buildItems(mode), i:0, log:[],
+      streak:0, best:0, correct:0, wrong:0, answered:false,
+      timer:null, t0:0, limit:0, startedAt:Date.now(),
+      globalLeft:mode.global || 0, globalEnd:0, globalTimer:null, ended:false
+    };
+    mode.init(run);
+    $("shop").hidden = true;
+    show("play");
+    if (mode.world){
+      buildWorld();
+      renderHUD();
+      $("worldhint").textContent = "Arrow keys, WASD or the pad below · " + (mode.hint || "step on a lit terminal for a question");
+      enterWalk();
+      return;
+    }
+    $("world").hidden = true;
+    if (mode.global){
+      run.globalEnd = performance.now() + mode.global;
+      globalTick(run);
+    }
+    askQuestion();
+  }
+
+  function globalTick(r){
+    if (r !== run || r.ended) return;
+    var left = r.globalEnd - performance.now();
+    r.globalLeft = Math.max(0, left);
+    var b = $("timerbar"), f = $("timerfill");
+    b.hidden = false;
+    f.style.width = clamp((left / r.mode.global) * 100, 0, 100) + "%";
+    b.classList.toggle("low", left < 10000);
+    if (left <= 0){ finish(); return; }
+    r.globalTimer = requestAnimationFrame(function(){ globalTick(r); });
+  }
+
+  function currentItem(){
+    if (run.mode.mastery){
+      var head = run.queue[0];
+      return head ? prep(state.kit.questions[head.qi]) : null;
+    }
+    return run.items[run.i];
+  }
+
+  function askQuestion(){
+    if (run.ended) return;
+    var mode = run.mode;
+    if (!mode.mastery && run.i >= run.items.length){
+      if (!mode.loop){ finish(); return; }
+      run.items = buildItems(mode);
+      run.i = 0;
+    }
+    var item = currentItem();
+    if (!item){ finish(); return; }
+    run.item = item;
+    run.answered = false;
+
+    $("feedback").hidden = true;
+    $("shop").hidden = true;
+    $("qcard").hidden = false;
+    $("tiles").hidden = false;
+
+    var answered = run.correct + run.wrong;
+    $("qcount").textContent = mode.subtitle ? mode.subtitle(run)
+      : (mode.loop ? ("Question " + (answered + 1)) : ("Question " + (run.i + 1) + " of " + run.items.length));
+    $("qtext").textContent = item.q;
+
+    var claim = $("qclaim");
+    claim.textContent = "";
+    claim.hidden = !item.claim;
+    if (item.claim) claim.appendChild(el("span", "qclaim", "“" + item.claim + "”"));
+
+    renderAnswerArea(item);
+    renderHUD();
+
+    run.limit = mode.time(run);
+    if (run.limit > 0){ $("timerbar").hidden = false; startTimer(); }
+    else if (!mode.global){ $("timerbar").hidden = true; }
+  }
+
+  function renderAnswerArea(item){
+    var box = $("tiles");
+    box.textContent = "";
+    if (item.type === "text"){
+      box.className = "answerbox";
+      var form = document.createElement("form");
+      form.style.display = "contents";
+      var input = document.createElement("input");
+      input.type = "text";
+      input.id = "ta-input";
+      input.autocomplete = "off";
+      input.autocapitalize = "off";
+      input.spellcheck = false;
+      input.placeholder = "Type your answer";
+      var go = el("button", "btn btn-go", "Submit");
+      go.type = "submit";
+      form.appendChild(input);
+      form.appendChild(go);
+      form.onsubmit = function(e){
+        e.preventDefault();
+        if (run.answered) return;
+        submitAnswer(tidyMatch(input.value, item), input.value.trim());
+      };
+      box.appendChild(form);
+      setTimeout(function(){ try { input.focus(); } catch(e){} }, 40);
+      return;
+    }
+    box.className = "tiles" + (item.opts.length === 2 ? " two" : "");
+    item.opts.forEach(function(o, idx){
+      var b = el("button", "tile c" + idx);
+      b.innerHTML = shapeSVG(idx);
+      b.appendChild(el("span", null, o.text));
+      b.onclick = function(){ if (!run.answered) submitAnswer(o.correct, o.text, idx); };
+      box.appendChild(b);
+    });
+  }
+  function tidyMatch(value, item){
+    var v = tidy(value);
+    if (!v) return false;
+    return item.accept.some(function(a){ return tidy(a) === v; });
+  }
+
+  function startTimer(){
+    var r = run;
+    r.t0 = performance.now();
+    var b = $("timerbar"), f = $("timerfill");
+    b.classList.remove("low");
+    function tick(){
+      if (r !== run || r.answered || r.ended) return;
+      var left = r.limit - (performance.now() - r.t0);
+      if (left <= 0){ f.style.width = "0%"; submitAnswer(false, null); return; }
+      f.style.width = (left / r.limit * 100) + "%";
+      if (left < r.limit * 0.3) b.classList.add("low");
+      r.timer = requestAnimationFrame(tick);
+    }
+    r.timer = requestAnimationFrame(tick);
+  }
+
+  function renderHUD(){
+    var hud = $("hud"), mode = run.mode;
+    hud.textContent = "";
+    var av = el("span", "hootart");
+    av.innerHTML = hootSVG(run.players ? run.players[run.turn].hoot : myHoot);
+    hud.appendChild(av);
+    (mode.hud(run) || []).forEach(function(s){ hud.appendChild(stat(s[0], s[1], s[2])); });
+    if (mode.gauge){
+      var g = mode.gauge(run), box = el("div", "goalbar");
+      box.appendChild(el("span", null, g.label));
+      box.appendChild(bar(g.pct));
+      hud.appendChild(box);
+    } else {
+      hud.appendChild(el("div", "spacer"));
+    }
+    if (mode.shop){
+      var sb = el("button", "btn btn-go btn-sm", "Shop");
+      sb.onclick = function(){
+        if (mode.world){ if (run.phase === "walk") enterShopPhase(); return; }
+        var open = !$("shop").hidden;
+        $("shop").hidden = open;
+        if (!open) renderShop();
+      };
+      hud.appendChild(sb);
+    }
+    var quit = el("button", "btn btn-ghost btn-sm", mode.shop ? "Cash out" : "End run");
+    quit.onclick = finish;
+    hud.appendChild(quit);
+
+    var extra = $("extra");
+    extra.textContent = "";
+    if (mode.extra) mode.extra(run, extra);
+  }
+
+  function correctLabel(item){
+    if (item.type === "text") return item.accept[0];
+    return item.opts.filter(function(o){ return o.correct; }).map(function(o){ return o.text; }).join(" or ");
+  }
+
+  function submitAnswer(ok, picked, idx){
+    if (run.answered || run.ended) return;
+    run.answered = true;
+    if (run.timer) cancelAnimationFrame(run.timer);
+
+    var mode = run.mode, item = run.item;
+    var speed = run.limit > 0 ? clamp(1 - (performance.now() - run.t0) / run.limit, 0, 1) : 1;
+
+    if (item.type === "text"){
+      var input = $("ta-input");
+      if (input){ input.disabled = true; if (picked) input.value = picked; }
+    } else {
+      var box = $("tiles");
+      box.classList.add("locked");
+      Array.prototype.forEach.call(box.children, function(node, i){
+        node.onclick = null;
+        if (item.opts[i] && item.opts[i].correct) node.classList.add("right");
+        else node.classList.add("dim");
+      });
+    }
+
+    if (ok){
+      run.correct++; run.streak++;
+      if (run.streak > run.best) run.best = run.streak;
+    } else {
+      run.wrong++; run.streak = 0;
+    }
+
+    run.lastOk = ok;
+    var res = mode.resolve(run, ok, speed) || {};
+    run.log.push({
+      q:item.claim ? (item.q + " → “" + item.claim + "”") : item.q,
+      ok:ok, picked:picked || null, right:correctLabel(item), why:item.why
+    });
+    renderHUD();
+
+    var done = mode.over(run);
+
+    if (mode.fast){
+      var r = run;
+      setTimeout(function(){
+        if (r !== run || r.ended) return;
+        if (done) finish(); else { r.i++; askQuestion(); }
+      }, ok ? 420 : 900);
+      return;
+    }
+
+    var fb = $("feedback");
+    fb.className = "feedback " + (ok ? "win" : "lose");
+    fb.hidden = false;
+    var v = $("fb-verdict");
+    v.textContent = ok ? "Correct" : (picked == null ? "Out of time" : "Not quite");
+    var note = res.note || (ok ? "" : ("Answer: " + correctLabel(item)));
+    if (note) v.appendChild(el("em", null, note));
+
+    $("fb-why").textContent = (mode.alwaysWhy || !ok)
+      ? (item.why || (ok ? "" : ("The right answer was “" + correctLabel(item) + "”.")))
+      : "";
+
+    $("fb-next").textContent = done ? "See the scorecard"
+      : (mode.mastery ? "Next" : (!mode.loop && run.i + 1 >= run.items.length ? "See the scorecard" : "Next question"));
+    run.done = done;
+    setTimeout(function(){ try { $("fb-next").focus(); } catch(e){} }, 40);
+  }
+
+  $("fb-next").onclick = function(){
+    if (run.done){ finish(); return; }
+    if (run.mode.advance) run.mode.advance(run);
+    run.i++;
+    if (run.mode.world){ resumeAfterQuestion(); return; }
+    askQuestion();
+  };
+  $("shop-close").onclick = function(){
+    $("shop").hidden = true;
+    if (run && run.mode.world && !run.ended) enterWalk();
+  };
+
+  /* ---------------- results ---------------- */
+  function finish(){
+    if (run.ended) return;
+    run.ended = true;
+    if (run.timer) cancelAnimationFrame(run.timer);
+    if (run.globalTimer) cancelAnimationFrame(run.globalTimer);
+    if (W && W.raf) cancelAnimationFrame(W.raf);
+    W = null;
+    $("world").hidden = true;
+    $("qcard").hidden = false;
+    $("tiles").hidden = false;
+    run.answered = true;
+
+    var mode = run.mode, r = mode.result(run) || {};
+    var total = run.correct + run.wrong;
+    var acc = total ? Math.round((run.correct / total) * 100) : 0;
+
+    var won = bankStats(run.id, run);
+    $("r-hoot").innerHTML = hootSVG(r.board ? r.board[0].hoot : myHoot);
+    var unl = $("r-unlocks");
+    unl.textContent = "";
+    won.forEach(function(h){
+      var box = el("div", "unlocked");
+      var art = el("span", "hootart");
+      art.innerHTML = hootSVG(h);
+      box.appendChild(art);
+      var t = el("div");
+      t.appendChild(el("b", null, "New hoot: " + h.name));
+      t.appendChild(el("span", null, h.how + " — done. Pick it on the Play tab."));
+      box.appendChild(t);
+      unl.appendChild(box);
+    });
+
+    $("r-mode").textContent = mode.name + " · " + state.kit.title;
+    $("r-score").textContent = r.big;
+    $("r-sub").textContent = r.sub || "";
+
+    var pills = $("r-pills");
+    pills.textContent = "";
+    function pill(label, value){
+      var p = el("span", "pill");
+      p.appendChild(document.createTextNode(label + " "));
+      p.appendChild(el("b", null, String(value)));
+      pills.appendChild(p);
+    }
+    pill("Accuracy", acc + "%");
+    if (!r.noStreakPills) pill("Best streak", "×" + run.best);
+    pill("Right", num(run.correct));
+    pill("Wrong", num(run.wrong));
+    (r.pills || []).forEach(function(p){ pill(p[0], p[1]); });
+
+    if (r.best !== undefined){
+      var key = "gimhoot.best." + run.id;
+      var prev = store(key) || 0;
+      var isBest = r.lower ? (!prev || r.best < prev) : r.best > prev;
+      if (isBest) store(key, r.best);
+      var fmt = r.bestFmt || num;
+      pill(isBest ? "New personal best" : "Your best",
+        fmt(isBest ? r.best : (r.lower ? prev : Math.max(prev, r.best))));
+    }
+
+    var board = $("r-board");
+    board.textContent = "";
+    if (r.board){
+      r.board.forEach(function(p, i){
+        var li = el("li");
+        li.style.borderLeftColor = PLAYER_COLORS[i % 4];
+        li.appendChild(el("span", "rank", "#" + (i + 1)));
+        if (p.hoot){
+          var av = el("span", "hootart");
+          av.innerHTML = hootSVG(p.hoot);
+          li.appendChild(av);
+        }
+        li.appendChild(el("span", "who", p.name + (p.hoot ? " · " + p.hoot.name : "")));
+        li.appendChild(el("span", "pts", num(p.score)));
+        board.appendChild(li);
+      });
+    }
+
+    var review = $("r-review");
+    review.textContent = "";
+    var seen = {};
+    var shown = run.log.slice().reverse().filter(function(l){
+      if (seen[l.q]) return false;
+      seen[l.q] = 1; return true;
+    }).reverse().slice(-30);
+    $("r-revhead").textContent = shown.length ? "How it went" : "";
+    shown.forEach(function(l){
+      var li = el("li", l.ok ? "ok" : "");
+      li.appendChild(el("div", null, l.q));
+      var a = el("div", "ans");
+      if (l.ok){ a.textContent = "You got it: "; a.appendChild(el("b", null, l.right)); }
+      else {
+        a.textContent = l.picked ? ("You said “" + l.picked + "” · answer: ") : "No answer · answer: ";
+        a.appendChild(el("b", null, l.right));
+      }
+      li.appendChild(a);
+      if (l.why) li.appendChild(el("div", "ans", l.why));
+      review.appendChild(li);
+    });
+
+    show("results");
+  }
+
+  $("r-again").onclick = function(){ startRun(run.id, run.opt); };
+  $("r-home").onclick = function(){ if (run) run.ended = true; show("setup"); setTab("play"); };
+
+  document.addEventListener("keydown", function(e){
+    if ($("s-play").hidden || !run || run.phase === "walk" || run.phase === "shop") return;
+    if (document.activeElement && document.activeElement.id === "ta-input") return;
+    var n = Number(e.key);
+    if (n >= 1 && n <= 4 && !run.answered && run.item && run.item.type === "mc"){
+      var t = $("tiles").children[n - 1];
+      if (t) t.click();
+    } else if ((e.key === "Enter" || e.key === " ") && run.answered && !$("feedback").hidden){
+      e.preventDefault();
+      $("fb-next").click();
+    }
+  });
+
+  /* ---------------- boot ---------------- */
+  function start(){
+    renderModes();
+    loadShelf();
+    renderEditor();
+    renderNowPlaying();
+    renderKits();
+    setTab("play");
+    show("setup");
+    consumeHash();
+  }
+  try {
+    if (window.claude && window.claude.hot && window.claude.hot.snapshot){
+      window.claude.hot.snapshot(function(){ return { kit:state.kit }; });
+    }
+    if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(start);
+    else start();
+  } catch(e){ start(); }
+})();
+</script>
+
+</body>
+</html>
